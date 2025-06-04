@@ -1,23 +1,5 @@
 export const FooterLink2 = [
   {
-    title: "Subjects",
-    links: [
-      { title: "Al", link: "/al" },
-      { title: "Cloud Computing", link: "/cloud-computing" },
-      { title: "Code Foundations", link: "/code-foundations" },
-      { title: "Computer Science", link: "/computer-science" },
-      { title: "Cybersecurity", link: "/cybersecurity" },
-      { title: "Data Analytics", link: "/data-analytics" },
-      { title: "Data Science", link: "/data-science" },
-      { title: "Data Visualization", link: "/data-visualization" },
-      { title: "Developer Tools", link: "/developer-tools" },
-      { title: "DevOps", link: "/devops" },
-      { title: "Machine Learning", link: "/machine-learning" },
-      { title: "Web Design", link: "/web-design" },
-      { title: "Web Development", link: "/web-development" },
-    ],
-  },
-  {
     title: "Languages",
     links: [
       { title: "Bash", link: "/bash" },
@@ -45,6 +27,21 @@ export const FooterLink2 = [
       },
       { title: "Full Catalog", link: "/full-catalog" },
       { title: "Beta Content", link: "/beta-content" },
+    ],
+  },
+  {
+    title: "Subjects",
+    links: [
+      { title: "Al", link: "/al" },
+      { title: "Cloud Computing", link: "/cloud-computing" },
+      { title: "Data Analytics", link: "/data-analytics" },
+      { title: "Data Science", link: "/data-science" },
+      { title: "Data Visualization", link: "/data-visualization" },
+      { title: "Developer Tools", link: "/developer-tools" },
+      { title: "DevOps", link: "/devops" },
+      { title: "Machine Learning", link: "/machine-learning" },
+      { title: "Web Design", link: "/web-design" },
+      { title: "Web Development", link: "/web-development" },
     ],
   },
 ];

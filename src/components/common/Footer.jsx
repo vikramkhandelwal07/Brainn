@@ -37,28 +37,39 @@ const Community = [
 
 const Footer = () => {
   return (
-    <div className="bg-black text-white">
-      <div className="flex flex-col lg:flex-row gap-8 justify-between w-11/12 max-w-maxContent mx-auto py-14">
-        {/* Left Column */}
-        <div className="w-full flex flex-col lg:flex-row pb-5 border-b border-gray-700">
-          <div className="w-full lg:w-[50%] flex flex-wrap justify-between lg:border-r border-gray-700 pr-5 gap-6">
-            {/* Company Section */}
-            <div className="w-full lg:w-[30%]">
-              <img src={brainnLogo} alt="Logo" className="object-contain h-20" />
-              <h1 className="font-semibold text-md mt-4">Company</h1>
-              <div className="flex flex-col gap-2 mt-2">
+    <div className="bg-gradient-to-b from-gray-900 to-black text-white">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Company Information */}
+          <div className="lg:col-span-4">
+            <div className="mb-6">
+              <img
+                src={brainnLogo}
+                alt="Brainn Logo"
+                className="h-12 w-auto mb-6"
+              />
+            </div>
+
+            {/* Company Links */}
+            <div className="mb-8">
+              <h1 className="text-lg font-semibold mb-4 text-gray-100">Company</h1>
+              <div className="space-y-3">
                 {["About", "Careers", "Affiliates"].map((ele, i) => (
                   <Link
                     key={i}
                     to={`/${ele.toLowerCase()}`}
-                    className="text-md hover:text-violet-600 transition"
+                    className="block text-gray-300 hover:text-violet-600 transition-colors duration-200 text-sm"
                   >
                     {ele}
                   </Link>
                 ))}
               </div>
-              {/* Social Icons */}
-              <div className="flex gap-3 mt-4 text-lg">
+            </div>
+
+            {/* Social Media */}
+            <div className="mb-8">
+              <div className="flex space-x-4">
                 {[
                   { icon: <FaFacebook />, link: "https://www.facebook.com" },
                   { icon: <FaGoogle />, link: "https://projects.100xdevs.com" },
@@ -73,127 +84,140 @@ const Footer = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Social link ${i}`}
-                    className="hover:text-violet-600 transition"
+                    className="w-10 h-10 bg-gray-800 hover:bg-violet-600 rounded-lg flex items-center justify-center transition-colors duration-200"
                   >
                     {icon}
                   </a>
                 ))}
               </div>
-              {/* Email Form */}
-              <div className="mt-4">
-                <h4 className="mb-1">Email Us</h4>
-                <div className="flex items-center">
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    className="border-2 border-pink-500 rounded px-2 py-1 w-44 text-black"
-                  />
-                  <a href="mailto:abc@gmail.com" className="ml-2">
-                    <SendIcon className="text-pink-500 hover:text-violet-600 cursor-pointer" />
+            </div>
+
+            {/* Email Form */}
+            <div>
+              <h4 className="mb-3 text-gray-100 font-medium">Email Us</h4>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm flex-1"
+                />
+                <a href="mailto:abc@gmail.com" className="p-2 bg-pink-500 hover:bg-violet-600 rounded-lg transition-colors duration-200">
+                  <SendIcon className="text-white" fontSize="small" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Resources */}
+          <div className="lg:col-span-2">
+            <h1 className="text-lg font-semibold mb-6 text-gray-100">Resources</h1>
+            <div className="space-y-3">
+              {Resources.map((item, i) => (
+                <Link
+                  key={i}
+                  to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="block text-gray-300 hover:text-violet-600 transition-colors duration-200 text-sm"
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
+
+            <h1 className="text-lg font-semibold mb-4 mt-8 text-gray-100">Support</h1>
+            <Link
+              to="/help-center"
+              className="block text-gray-300 hover:text-violet-600 transition-colors duration-200 text-sm"
+            >
+              Help Center
+            </Link>
+          </div>
+
+          {/* Plans */}
+          <div className="lg:col-span-2">
+            <h1 className="text-lg font-semibold mb-6 text-gray-100">Plans</h1>
+            <div className="space-y-3">
+              {Plans.map((item, i) => (
+                <Link
+                  key={i}
+                  to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="block text-gray-300 hover:text-violet-600 transition-colors duration-200 text-sm"
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
+
+            <h1 className="text-lg font-semibold mb-4 mt-8 text-gray-100">Community</h1>
+            <div className="space-y-3">
+              {Community.map(({ name, link, external }, i) => (
+                external ? (
+                  <a
+                    key={i}
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-gray-300 hover:text-violet-600 transition-colors duration-200 text-sm"
+                  >
+                    {name}
                   </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Resources and Support */}
-            <div className="w-full lg:w-[30%]">
-              <h1 className="font-semibold text-xl">Resources</h1>
-              <div className="flex flex-col gap-2 mt-2">
-                {Resources.map((item, i) => (
+                ) : (
                   <Link
                     key={i}
-                    to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                    className="text-md hover:text-violet-600 transition"
+                    to={`/${link}`}
+                    className="block text-gray-300 hover:text-violet-600 transition-colors duration-200 text-sm"
                   >
-                    {item}
+                    {name}
                   </Link>
-                ))}
-              </div>
-              <h1 className="font-semibold text-xl mt-6">Support</h1>
-              <Link to="/help-center" className="text-md hover:text-violet-600 mt-2 block">
-                Help Center
-              </Link>
-            </div>
-
-            {/* Plans and Community */}
-            <div className="w-full lg:w-[30%]">
-              <h1 className="font-semibold text-xl">Plans</h1>
-              <div className="flex flex-col gap-2 mt-2">
-                {Plans.map((item, i) => (
-                  <Link
-                    key={i}
-                    to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                    className="text-md hover:text-violet-600 transition"
-                  >
-                    {item}
-                  </Link>
-                ))}
-              </div>
-              <h1 className="font-semibold text-xl mt-6">Community</h1>
-              <div className="flex flex-col gap-2 mt-2">
-                {Community.map(({ name, link, external }, i) => (
-                  external ? (
-                    <a
-                      key={i}
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-md hover:text-violet-600 transition"
-                    >
-                      {name}
-                    </a>
-                  ) : (
-                    <Link
-                      key={i}
-                      to={`/${link}`}
-                      className="text-md hover:text-violet-600 transition"
-                    >
-                      {name}
-                    </Link>
-                  )
-                ))}
-              </div>
+                )
+              ))}
             </div>
           </div>
 
           {/* Footer Links Column */}
-          <div className="w-full lg:w-[50%] flex flex-wrap justify-between pl-5 gap-6 mt-6 lg:mt-0">
-            {FooterLink2.map((group, i) => (
-              <div key={i} className="w-full lg:w-[30%]">
-                <h1 className="font-semibold text-xl">{group.title}</h1>
-                <div className="flex flex-col gap-2 mt-2">
-                  {group.links.map((linkItem, index) => (
-                    <Link
-                      key={index}
-                      to={linkItem.link}
-                      className="text-md hover:text-violet-600 transition"
-                    >
-                      {linkItem.title}
-                    </Link>
-                  ))}
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+              {FooterLink2.map((group, i) => (
+                <div key={i} className="space-y-1">
+                  <h1 className="text-lg font-semibold mb-6 text-gray-100">{group.title}</h1>
+                  <div className="space-y-4">
+                    {group.links.map((linkItem, index) => (
+                      <Link
+                        key={index}
+                        to={linkItem.link}
+                        className="block text-gray-300 hover:text-violet-600 transition-colors duration-200 text-sm leading-relaxed"
+                      >
+                        {linkItem.title}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom footer */}
-      <div className="flex flex-col lg:flex-row items-center justify-between w-11/12 max-w-maxContent mx-auto pb-10 pt-4 border-t border-gray-700 text-sm">
-        <div className="flex flex-col lg:flex-row gap-4 w-full justify-between items-center">
-          <div className="flex flex-wrap justify-center lg:justify-start">
-            {BottomFooter.map((ele, i) => (
-              <Link
-                key={i}
-                to={`/${ele.toLowerCase().replace(/\s+/g, "-")}`}
-                className={`px-3 ${i < BottomFooter.length - 1 ? "border-r border-gray-700" : ""} hover:text-violet-400 transition`}
-              >
-                {ele}
-              </Link>
-            ))}
-          </div>
-          <div className="text-center mt-4 lg:mt-0">
-            Made with ❤️ © {new Date().getFullYear()} Brainn
+      {/* Bottom Footer */}
+      <div className="bg-black border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
+            {/* Legal Links */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start space-x-6">
+              {BottomFooter.map((ele, i) => (
+                <Link
+                  key={i}
+                  to={`/${ele.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="text-gray-400 hover:text-violet-400 transition-colors duration-200 text-sm"
+                >
+                  {ele}
+                </Link>
+              ))}
+            </div>
+
+            {/* Copyright */}
+            <div className="text-gray-400 text-sm">
+              Made with ❤️ © {new Date().getFullYear()} Brainn
+            </div>
           </div>
         </div>
       </div>

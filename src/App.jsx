@@ -4,6 +4,7 @@ import Navbar from "./components/common/Navbar";
 import OpenRoute from "./components/sections/auth/OpenRoute";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
+import About from "./pages/About";
 function App() {
   return (
     <div className="w-full min-h-screen bg-black flex flex-col">
@@ -26,6 +27,12 @@ function App() {
             </OpenRoute>
           }
         />
+        <Route path="/about" element={<About />} />
+        {/* <Route path="/contact" element={<Contact />} /> */}
+        {/* <Route path="/project" element={<Project />} />
+        <Route path="/rateus" element={<Rateus />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/termsandconditions" element={<TermsAndConditions />} /> */}
       </Routes> 
     </div>
   )

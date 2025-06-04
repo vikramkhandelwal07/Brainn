@@ -7,7 +7,7 @@ const Login = () => {
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row">
 
-      <div className="relative w-full md:w-1/2 bg-gradient-to-br from-violet-900 via-black to-black flex items-center justify-center p-10 overflow-hidden">
+      <div className="relative w-full md:w-1/2 bg-gradient-to-br from-pink-800 via-black to-black flex items-center justify-center p-10 overflow-hidden">
         <div className="flex flex-col w-full max-w-md gap-4 z-10">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-500 bg-clip-text text-transparent">
             Welcome Back
