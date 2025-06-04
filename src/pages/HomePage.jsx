@@ -1,16 +1,16 @@
 import React from 'react';
 import Spline from '@splinetool/react-spline';
 import { Link } from 'react-router-dom';
-import HoverButton from '../ui/hover-button';
+import HoverButton from '../components/ui/hover-button';
 import { FiArrowRight } from 'react-icons/fi';
-import { Component } from "../ui/etheral-shadow";
+import { Component } from "../components/ui/etheral-shadow";
 import { FaChalkboardTeacher, FaBookOpen } from "react-icons/fa";
 import { PiStudentBold } from "react-icons/pi";
-import AnimationCommunity from '../ui/animation-community';
-import TimelineSection from '../common/home/timeline-section';
-import Category from '../common/home/Category';
-import Footer from '../common/Footer';
-import { BeamsBackground } from '../ui/beams-background';
+import AnimationCommunity from '../components/ui/animation-community';
+import TimelineSection from '../components/sections/home/timeline-section';
+import Category from '../components/sections/home/Category';
+import Footer from '../components/common/Footer';
+import { BeamsBackground } from '../components/ui/beams-background';
 
 const HomePage = () => {
   return (

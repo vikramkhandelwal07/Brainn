@@ -3,7 +3,7 @@ import { Link, useLocation, matchPath } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { PiShoppingCartSimpleDuotone } from "react-icons/pi";
 import brainnLogo from '../../assets/Brainn.png';
-import ProfileMenu from './auth/ProfileMenu';
+import ProfileMenu from '../sections/auth/ProfileMenu';
 import { apiConnectors } from '../../services/apiConnectors';
 import { categories } from '../../services/api';
 

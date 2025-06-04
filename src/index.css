@@ -18,3 +18,15 @@ html, body {
 }
 
 
+
+
+/* For Firefox */
+html, body {
+  scrollbar-width: none; /* hides scrollbar */
+}
+
+/* For Chrome, Edge, Safari */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* hides scrollbar */
+}
