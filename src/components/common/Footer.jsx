@@ -37,7 +37,7 @@ const Community = [
 
 const Footer = () => {
   return (
-    <div className="bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="bg-gradient-to-b to-gray-900 from-black text-white">
       <div className="max-w-7xl mx-auto px-6 py-16">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
