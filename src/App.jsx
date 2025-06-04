@@ -5,6 +5,7 @@ import OpenRoute from "./components/sections/auth/OpenRoute";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
 import About from "./pages/About";
+import Contact from "./pages/Contact";
 function App() {
   return (
     <div className="w-full min-h-screen bg-black flex flex-col">
@@ -28,7 +29,7 @@ function App() {
           }
         />
         <Route path="/about" element={<About />} />
-        {/* <Route path="/contact" element={<Contact />} /> */}
+        <Route path="/contact" element={<Contact />} />
         {/* <Route path="/project" element={<Project />} />
         <Route path="/rateus" element={<Rateus />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
