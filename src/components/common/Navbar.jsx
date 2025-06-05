@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { PiShoppingCartSimpleDuotone } from "react-icons/pi";
 import brainnLogo from '../../assets/Brainn.png';
 import ProfileMenu from '../sections/auth/ProfileMenu';
-import { apiConnectors } from '../../services/apiConnectors';
+import { apiConnector } from '../../services/apiConnector';
 import { categories } from '../../services/api';
 
 const Navbar = () => {
@@ -17,7 +17,7 @@ const Navbar = () => {
 
   const fetchCategories = async () => {
     try {
-      const result = await apiConnectors("GET", categories.CATEGORIES_API);
+      const result = await apiConnector("GET", categories.CATEGORIES_API);
       console.log("Fetched categories:", result);
       setCatalogLinks(result?.data?.data || []);
     } catch (error) {
@@ -65,8 +65,8 @@ const Navbar = () => {
               >
                 <span
                   className={`cursor-pointer hover:text-blue-400 transition duration-150 ${location.pathname.startsWith('/catalog')
-                      ? 'text-blue-400 font-semibold'
-                      : ''
+                    ? 'text-blue-400 font-semibold'
+                    : ''
                     }`}
                 >
                   Catalog ▾
