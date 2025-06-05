@@ -7,8 +7,8 @@ const ContactPageSection = () => {
     <div className="relative border border-gray-700/50 bg-gradient-to-br from-gray-800/30 to-gray-900/50 backdrop-blur-xl rounded-2xl p-8 lg:p-12 flex gap-6 flex-col overflow-hidden">
 
       {/* Background decorative elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 rounded-full blur-2xl"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/50 to-pink-500/50 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-500/50 to-purple-500/50 rounded-full blur-2xl"></div>
       
 
       {/* Header Section */}

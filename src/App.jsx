@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import ForgotPassword from "./pages/ForgotPassword";
 function App() {
   return (
     <div className="w-full min-h-screen bg-black flex flex-col">
@@ -25,6 +26,14 @@ function App() {
           element={
             <OpenRoute>
               <Login />
+            </OpenRoute>
+          }
+        />
+        <Route
+          path="forgot-password"
+          element={
+            <OpenRoute>
+              <ForgotPassword />
             </OpenRoute>
           }
         />
