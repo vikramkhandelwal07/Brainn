@@ -2,7 +2,7 @@ import React from 'react'
 
 const Error = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-black via-black to-sky-400 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-black via-black to-sky-400/50 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>

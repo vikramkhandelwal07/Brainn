@@ -15,7 +15,7 @@ import TermsAndConditions from "./pages/legal/TermsAndCondition";
 import {ACCOUNT_TYPE} from "./utils/Constants";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import VerifyEmail from "./pages/VerifyEmail";
-// import UpdatePassword from "./pages/UpdatePassword";
+import UpdatePassword from "./pages/UpdatePassword";
 // import Dashboard from "./pages/Dashboard";
 // import MyProfile from "./pages/dashboard/MyProfile";
 // import Settings from "./pages/dashboard/Settings";
@@ -80,14 +80,14 @@ function App() {
             </OpenRoute>
           }
         />
-        {/* <Route
+        <Route
           path="update-password/:id"
           element={
             <OpenRoute>
               <UpdatePassword />
             </OpenRoute>
           }
-        /> */}
+        />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         {/* <Route path="/project" element={<Project />} />

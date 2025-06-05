@@ -3,7 +3,7 @@ import SignupForm from '../components/sections/auth/SignUpForm';
 
 const Signup = () => {
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row items-center justify-center bg-gradient-to-tr from-pink-800 via-black to-black px-6 md:px-20 gap-10 text-white">
+    <div className="w-full h-screen flex flex-col md:flex-row items-center justify-center bg-gradient-to-tr from-pink-700/40 via-black to-black px-6 md:px-20 gap-10 text-white">
 
       {/* Left Section: Headings and Description */}
       <div className="w-full md:w-1/2 text-center md:text-left space-y-6">
