@@ -12,7 +12,7 @@ import {
   FaInstagram,
 } from "react-icons/fa6";
 
-const BottomFooter = ["Privacy Policy", "Cookie Policy", "Terms"];
+const BottomFooter = ["Privacy Policy", "Cookie Policy", "termsandconditions"];
 const Resources = [
   "Articles",
   "Blog",

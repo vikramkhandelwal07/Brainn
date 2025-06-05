@@ -7,6 +7,8 @@ import Signup from "./pages/SignUp";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ForgotPassword from "./pages/ForgotPassword";
+import Error from "./pages/Error404";
+import TermsAndConditions from "./pages/legal/TermsAndCondition";
 function App() {
   return (
     <div className="w-full min-h-screen bg-black flex flex-col">
@@ -40,9 +42,10 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         {/* <Route path="/project" element={<Project />} />
-        <Route path="/rateus" element={<Rateus />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/termsandconditions" element={<TermsAndConditions />} /> */}
+        <Route path="/rateus" element={<Rateus />} /> */}
+        {/* <Route path="/privacy-policy" element={<PrivacyPolicy />} /> */}
+        <Route path="/termsandconditions" element={<TermsAndConditions />} />
+        <Route path="*" element={<Error />} />
       </Routes> 
     </div>
   )
