@@ -2,9 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
 
 const initialState = {
-  cartItems: localStorage.getItem("cartItems")
-    ? JSON.parse(localStorage.getItem("cartItems"))
+  cart: localStorage.getItem("cart")
+    ? JSON.parse(localStorage.getItem("cart"))
     : [],
+  total: localStorage.getItem("total")
+    ? JSON.parse(localStorage.getItem("total"))
+    : 0,
   totalItems: localStorage.getItem("totalItems")
     ? JSON.parse(localStorage.getItem("totalItems"))
     : 0,
@@ -14,57 +17,56 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    setTotalItems: (state, action) => {
-      state.totalItems = action.payload;
-      localStorage.setItem("totalItems", JSON.stringify(state.totalItems));
-    },
-
     addToCart: (state, action) => {
-      const item = action.payload; // expects { productId, name, price, quantity }
-      const existingItem = state.cartItems.find(
-        (i) => i.productId === item.productId
-      );
+      const course = action.payload;
+      const index = state.cart.findIndex((item) => item._id === course._id);
 
-      if (existingItem) {
-        existingItem.quantity += item.quantity;
-        toast.success("Increased item quantity in cart");
-      } else {
-        state.cartItems.push(item);
-        toast.success("Item added to cart");
+      if (index >= 0) {
+        // If the course is already in the cart, do not modify the quantity
+        toast.error("Course already in cart");
+        return;
       }
-
-      state.totalItems += item.quantity;
-      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      // If the course is not in the cart, add it to the cart
+      state.cart.push(course);
+      // Update the total quantity and price
+      state.totalItems++;
+      state.total += course.price;
+      // Update to localstorage
+      localStorage.setItem("cart", JSON.stringify(state.cart));
+      localStorage.setItem("total", JSON.stringify(state.total));
       localStorage.setItem("totalItems", JSON.stringify(state.totalItems));
+      // show toast
+      toast.success("Course added to cart");
     },
-
     removeFromCart: (state, action) => {
-      const productId = action.payload;
-      const itemToRemove = state.cartItems.find(
-        (i) => i.productId === productId
-      );
+      const courseId = action.payload;
+      const index = state.cart.findIndex((item) => item._id === courseId);
 
-      if (itemToRemove) {
-        state.totalItems -= itemToRemove.quantity;
-        state.cartItems = state.cartItems.filter(
-          (i) => i.productId !== productId
-        );
-        toast.success("Item removed from cart");
-        localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      if (index >= 0) {
+        // If the course is found in the cart, remove it
+        state.totalItems--;
+        state.total -= state.cart[index].price;
+        state.cart.splice(index, 1);
+        // Update to localstorage
+        localStorage.setItem("cart", JSON.stringify(state.cart));
+        localStorage.setItem("total", JSON.stringify(state.total));
         localStorage.setItem("totalItems", JSON.stringify(state.totalItems));
+        // show toast
+        toast.success("Course removed from cart");
       }
     },
-
     resetCart: (state) => {
-      state.cartItems = [];
+      state.cart = [];
+      state.total = 0;
       state.totalItems = 0;
-      localStorage.removeItem("cartItems");
+      // Update to localstorage
+      localStorage.removeItem("cart");
+      localStorage.removeItem("total");
       localStorage.removeItem("totalItems");
-      toast.success("Cart has been reset");
     },
   },
 });
 
-export const { setTotalItems, addToCart, removeFromCart, resetCart } =
-  cartSlice.actions;
+export const { addToCart, removeFromCart, resetCart } = cartSlice.actions;
+
 export default cartSlice.reducer;

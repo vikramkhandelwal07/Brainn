@@ -8,7 +8,7 @@ exports.updateProfile = async (req, res) => {
     const {
       gender = "",
       dob = "",
-      contact = "",
+      contactNumber = "",
       about = "",
       location = "",
       socialLinks = {},
@@ -36,7 +36,7 @@ exports.updateProfile = async (req, res) => {
     // Update fields
     profile.gender = gender;
     profile.dateOfBirth = dob;
-    profile.contact = contact;
+    profile.contactNumber = contactNumber;
     profile.about = about;
     profile.location = location;
     profile.socialLinks = socialLinks;

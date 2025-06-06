@@ -8,13 +8,21 @@ const { cloudinaryConnect } = require("./config/cloudinary");
 
 const app = express();
 
-// Middleware
+const allowedOrigins = ["http://localhost:4000", "http://localhost:5173"];
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -25,12 +33,6 @@ app.use(
 );
 
 
-app.use(
-  cors({
-    origin: "http://localhost:5173", // <-- Match this with your frontend port
-    credentials: true,
-  })
-);
 
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));

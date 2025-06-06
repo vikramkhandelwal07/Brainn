@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
 import { Link, useNavigate } from "react-router-dom";
@@ -5,6 +6,9 @@ import { BiArrowBack } from "react-icons/bi";
 import { RxCountdownTimer } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { sendOtp, signUp } from "../services/authApi";
+import { setSignupData } from "../slices/authSlice";
+import { ACCOUNT_TYPE } from "../utils/Constants";
+import { toast } from "react-hot-toast";
 
 function VerifyEmail() {
   const [otp, setOtp] = useState("");
@@ -14,30 +18,59 @@ function VerifyEmail() {
 
   useEffect(() => {
     if (!signupData) {
-      navigate("/signup");
+      const savedData = localStorage.getItem("signupData");
+      if (savedData) {
+        dispatch(setSignupData(JSON.parse(savedData)));
+      } else {
+        navigate("/signup");
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, signupData, navigate]);
+  
 
   const handleVerifyAndSignup = (e) => {
     e.preventDefault();
+    if (!signupData) {
+      toast.error("Signup data missing. Please sign up again.");
+      return;
+    }
+
     const {
-      accountType,
       firstName,
       lastName,
       email,
-      contact,
+      contactNumber,
       password,
       confirmPassword,
+      accountType,
     } = signupData;
 
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !contactNumber ||
+      !password ||
+      !confirmPassword ||
+      !accountType
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (!otp || otp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    console.log("Verifying with:", signupData, "OTP:", otp);
     dispatch(
       signUp(
         accountType,
         firstName,
         lastName,
         email,
-        contact,
+        contactNumber,
         password,
         confirmPassword,
         otp,
@@ -135,7 +168,7 @@ function VerifyEmail() {
 
               <button
                 className="group flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium"
-                onClick={() => dispatch(sendOtp(signupData.email))}
+                  onClick={() => dispatch(sendOtp(signupData.email, navigate))}
               >
                 <RxCountdownTimer className="w-4 h-4 transition-transform duration-200 group-hover:rotate-12" />
                 <span>Resend Code</span>
@@ -147,7 +180,7 @@ function VerifyEmail() {
               <p className="text-gray-400 text-sm">
                 Didn't receive the code? Check your spam folder or{" "}
                 <button
-                  onClick={() => dispatch(sendOtp(signupData.email))}
+                    onClick={() => dispatch(sendOtp(signupData.email, navigate))}
                   className="text-yellow-400 hover:text-yellow-300 transition-colors duration-200 underline"
                 >
                   try again

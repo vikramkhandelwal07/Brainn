@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
@@ -11,6 +12,8 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ForgotPassword from "./pages/ForgotPassword";
 import Error from "./pages/Error404";
+import Catalog from "./pages/Catalog";
+import CourseDetails from "./pages/CourseDetails";
 import TermsAndConditions from "./pages/legal/TermsAndCondition";
 import {ACCOUNT_TYPE} from "./utils/Constants";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -19,12 +22,12 @@ import UpdatePassword from "./pages/UpdatePassword";
 // import Dashboard from "./pages/Dashboard";
 // import MyProfile from "./pages/dashboard/MyProfile";
 // import Settings from "./pages/dashboard/Settings";
-
+import Loading from "./components/common/LoadingSpinner";
 
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const { user } = useSelector((state) => state.profile);
+  const { user } = useSelector((state) => state.userProfile);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,7 +39,7 @@ function App() {
   if (loading) {
     return (
       <div>
-       
+       <Loading />
       </div>
     );
   }
@@ -46,8 +49,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        {/* <Route path="catalog/:catalogName" element={<Catalog />} /> */}
-        {/* <Route path="courses/:courseId" element={<CourseDetails />} /> */}
+        <Route path="catalog/:catalogName" element={<Catalog />} />
+        <Route path="courses/:courseId" element={<CourseDetails />} />
         <Route
           path="signup"
           element={

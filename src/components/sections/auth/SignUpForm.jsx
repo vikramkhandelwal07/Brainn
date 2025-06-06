@@ -24,12 +24,12 @@ const SignupForm = () => {
     firstName: "",
     lastName: "",
     email: "",
-    contact: "",
+    contactNumber: "",
     password: "",
     confirmPassword: "",
   });
 
-  const { firstName, lastName, email, contact, password, confirmPassword } = formData;
+  const { firstName, lastName, email, contactNumber, password, confirmPassword } = formData;
 
   const handleOnChange = (e) => {
     setFormData((prevData) => ({
@@ -71,8 +71,8 @@ const SignupForm = () => {
       );
       return;
     }
-    if (!isContactValid(contact)) {
-      toast.error("Please enter a valid 10-digit contact number starting with 6-9");
+    if (!isContactValid(contactNumber)) {
+      toast.error("Please enter a valid 10-digit contactNumber number starting with 6-9");
       return;
     }
     const signupData = {
@@ -87,7 +87,7 @@ const SignupForm = () => {
       firstName: "",
       lastName: "",
       email: "",
-      contact: "",
+      contactNumber: "",
       password: "",
       confirmPassword: "",
     });
@@ -173,15 +173,15 @@ const SignupForm = () => {
           <input
             required
             type="tel"
-            name="contact"
-            value={contact}
+            name="contactNumber"
+            value={contactNumber}
             onChange={(e) => {
               const value = e.target.value;
               if (/^\d{0,10}$/.test(value)) {
                 handleOnChange(e);
               }
             }}
-            placeholder="Enter contact number"
+            placeholder="Enter contactNumber number"
             className="w-full rounded-md bg-gray-800 p-3 pl-10 text-gray-100"
           />
         </label>

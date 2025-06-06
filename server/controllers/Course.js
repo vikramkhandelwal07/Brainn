@@ -139,7 +139,6 @@ exports.getAllCourses = async (req, res) => {
   }
 };
 
-
 exports.getCompleteCourseDetails = async (req, res) => {
   try {
     const { courseId } = req.body;
@@ -154,7 +153,7 @@ exports.getCompleteCourseDetails = async (req, res) => {
     const courseDetails = await Course.findById(courseId)
       .populate({
         path: "instructor",
-        select: "firstName lastName email image about contact",
+        select: "firstName lastName email image about contactNumber",
       })
       .populate("category", "name description")
       .populate("studentsEnrolled", "firstName lastName email image")
@@ -195,11 +194,10 @@ exports.getCompleteCourseDetails = async (req, res) => {
   }
 };
 
-
 exports.getCourseDetails = async (req, res) => {
   try {
     const { courseId } = req.body;
-    
+
     const course = await Course.findById(courseId)
       .populate("instructor", "firstName lastName email")
       .populate("category", "name")

@@ -6,7 +6,7 @@ const Profile = require("../models/Profile");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const mailSender = require("../utils/sendMail");
-
+const otpTemplate = require("../mails/emailVerificationTemplate");
 // SendOtp
 exports.sendOtp = async (req, res) => {
   try {
@@ -41,6 +41,7 @@ exports.sendOtp = async (req, res) => {
     // 3. Save OTP in DB
     const otpPayload = { email, otp };
     await Otp.create(otpPayload);
+    await mailSender(email, "OTP Verification - Brainn", otpTemplate(otp));
 
     // 4. Respond
     res.status(200).json({
@@ -115,7 +116,7 @@ exports.signUp = async (req, res) => {
     const profileDetails = await Profile.create({
       gender: null,
       dob: null,
-      contact: contactNumber,
+      contactNumber: contactNumber,
       about: null,
     });
 

@@ -2,9 +2,9 @@ import { toast } from "react-hot-toast";
 import { setLoading, setToken } from "../slices/authSlice";
 import { resetCart } from "../slices/cartSlice";
 import { setUser } from "../slices/userProfileSlice";
-import { apiConnectors } from "./apiConnectors";
+import { apiConnector } from "./apiConnector";
 import { endpoints } from "./api";
-
+import { useNavigate } from "react-router-dom";
 const {
   SENDOTP_API,
   SIGNUP_API,
@@ -23,7 +23,7 @@ export const sendOtp = (email, navigate) => async (dispatch) => {
   const toastId = toast.loading("Sending OTP...");
   dispatch(setLoading(true));
   try {
-    const response = await apiConnectors("POST", SENDOTP_API, {
+    const response = await apiConnector("POST", SENDOTP_API, {
       email,
       checkUserPresent: true,
     });
@@ -47,6 +47,7 @@ export const signUp =
     firstName,
     lastName,
     email,
+    contactNumber,
     password,
     confirmPassword,
     otp,
@@ -56,11 +57,12 @@ export const signUp =
     const toastId = toast.loading("Creating account...");
     dispatch(setLoading(true));
     try {
-      const response = await apiConnectors("POST", SIGNUP_API, {
+      const response = await apiConnector("POST", SIGNUP_API, {
         accountType,
         firstName,
         lastName,
         email,
+        contactNumber,
         password,
         confirmPassword,
         otp,
@@ -84,7 +86,7 @@ export const login = (email, password, navigate) => async (dispatch) => {
   const toastId = toast.loading("Logging in...");
   dispatch(setLoading(true));
   try {
-    const response = await apiConnectors("POST", LOGIN_API, { email, password });
+    const response = await apiConnector("POST", LOGIN_API, { email, password });
 
     if (!response.data.success) throw new Error(response.data.message);
 
@@ -124,7 +126,7 @@ export const getPasswordResetToken =
   (email, setEmailSent) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
-      const response = await apiConnectors("POST", RESETPASSTOKEN_API, {
+      const response = await apiConnector("POST", RESETPASSTOKEN_API, {
         email,
       });
 
@@ -144,7 +146,7 @@ export const resetPassword =
   (password, confirmPassword, token) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
-      const response = await apiConnectors("POST", RESETPASSWORD_API, {
+      const response = await apiConnector("POST", RESETPASSWORD_API, {
         password,
         confirmPassword,
         token,

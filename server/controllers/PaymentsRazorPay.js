@@ -2,13 +2,13 @@ const { instance } = require("../config/razorpay");
 const Course = require("../models/Course");
 const User = require("../models/User");
 const mailSender = require("../utils/sendMail");
-const coursePurchasedEmail = require("../templates/coursePurchasedEmail");
+const coursePurchasedEmail = require("../mails/coursePurchasedEmail");
 const crypto = require("crypto");
 
 exports.capturePayments = async (req, res) => {
   try {
     const { courseId } = req.body;
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     if (!courseId) {
       return res.status(400).json({
@@ -49,7 +49,6 @@ exports.capturePayments = async (req, res) => {
 
     const order = await instance.orders.create(options);
 
-
     res.status(200).json({
       success: true,
       message: "Order created successfully",
@@ -60,7 +59,6 @@ exports.capturePayments = async (req, res) => {
       amount: order.amount,
       currency: order.currency,
     });
-
   } catch (error) {
     console.error("Error in capturePayments:", error);
     res.status(500).json({
@@ -69,8 +67,6 @@ exports.capturePayments = async (req, res) => {
     });
   }
 };
-
-
 
 exports.verifySignature = async (req, res) => {
   try {
@@ -138,7 +134,6 @@ exports.verifySignature = async (req, res) => {
     res
       .status(200)
       .json({ success: true, message: "Unhandled webhook event type." });
-      
   } catch (error) {
     console.error("Webhook verification error:", error);
     res.status(500).json({
@@ -147,6 +142,5 @@ exports.verifySignature = async (req, res) => {
     });
   }
 };
-
 
 // router.post("/razorpay/webhook", express.json({ type: "*/*" }), verifyWebhook);

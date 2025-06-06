@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 
 import CountryCode from "../../../data/CountryCode.json"
-import { apiConnectors } from "../../../services/apiConnectors"
+import { apiConnector } from "../../../services/apiConnector"
 import { contactusEndpoint } from "../../../services/api"
 
 const ContactUsForm = () => {
@@ -18,7 +18,7 @@ const ContactUsForm = () => {
     // console.log("Form Data - ", data)
     try {
       setLoading(true)
-      const res = await apiConnectors(
+      const res = await apiConnector(
         "POST",
         contactusEndpoint.CONTACT_US_API,
         data
@@ -211,7 +211,7 @@ const ContactUsForm = () => {
               ) : (
                 <>
                   Send Message
-                  
+
                 </>
               )}
             </button>
