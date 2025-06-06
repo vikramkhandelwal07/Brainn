@@ -1,4 +1,5 @@
 const Category = require("../models/Category");
+const Course = require("../models/Course");
 
 exports.createCategory = async (req, res) => {
   try {
@@ -55,7 +56,7 @@ exports.getAllCategories = async (req, res) => {
 
 exports.completeCategoryPageDetails = async (req, res) => {
   try {
-    const { categoryId } = req.params;
+    const { categoryId } = req.body;
 
     // Validate category
     const selectedCategory = await Category.findById(categoryId);
@@ -83,7 +84,7 @@ exports.completeCategoryPageDetails = async (req, res) => {
 
     for (let i = 0; i < Math.min(otherCategories.length, 5); i++) {
       const courses = await Course.find({
-        Category: otherCategories[i]._id,
+        category: otherCategories[i]._id,
         published: true,
       })
         .populate("instructor", "firstName lastName")

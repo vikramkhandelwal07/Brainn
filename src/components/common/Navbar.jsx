@@ -42,7 +42,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="flex h-16 items-center justify-between bg-black border-b border-gray-700 backdrop-blur-md px-6 md:px-12 z-50 w-full">
+    <div className="flex h-16 items-center justify-between bg-black border-b border-gray-700 backdrop-blur-md px-6 md:px-12 z-50 ">
 
       {/* Logo */}
       <div className="flex items-center gap-3">

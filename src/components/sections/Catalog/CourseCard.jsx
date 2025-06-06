@@ -18,27 +18,27 @@ const CourseCard = ({ course, Height }) => {
   return (
     <>
       <Link to={`/courses/${course._id}`}>
-        <div className="">
+        <div className="bg-gray-900/10 rounded-2xl">
           <div className="rounded-lg">
             <img
               src={course?.thumbnail}
-              alt="course thumnail"
+              alt="course thumbnail"
               className={`${Height} w-full rounded-xl object-cover `}
             />
           </div>
           <div className="flex flex-col gap-2 px-1 py-3">
-            <p className="text-xl text-gray-100">{course?.courseName}</p>
-            <p className="text-sm text-gray-1000">
+            <p className="text-2xl font-semibold font-poppins text-white">{course?.courseName}</p>
+            <p className="text-base text-gray-200 font-normal font-mono">
               {course?.instructor?.firstName} {course?.instructor?.lastName}
             </p>
-            <div className="flex items-center gap-2">
-              <span className="text-yellow-5">{avgReviewCount || 0}</span>
+            <div className="flex items-center gap-2 text-yellow-500 font-poppins">
               <RatingStars Review_Count={avgReviewCount} />
-              <span className="text-black">
+              <span className="text-gray-500">{avgReviewCount || 0}</span>
+              <span className="text-gray-500 font-poppins">
                 {course?.ratingAndReviews?.length} Ratings
               </span>
             </div>
-            <p className="text-xl text-gray-100">Rs. {course?.price}</p>
+            <p className="text-2xl font-semibold font-poppins text-white">Rs. {course?.price}</p>
           </div>
         </div>
       </Link>

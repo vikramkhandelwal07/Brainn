@@ -24,8 +24,8 @@ const CourseSlider = ({ Courses = [], title = "Featured Courses" }) => {
       {Courses.length > 0 ? (
         <div className="relative px-4 md:px-8">
           {/* Gradient overlays for modern effect */}
-          <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-white via-white/50 to-transparent z-10 pointer-events-none hidden md:block"></div>
-          <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-white via-white/50 to-transparent z-10 pointer-events-none hidden md:block"></div>
+          {/* <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-black via-black/50 to-transparent z-10 pointer-events-none hidden md:block"></div>
+          <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-black via-black/50 to-transparent z-10 pointer-events-none hidden md:block"></div> */}
 
           <Swiper
             slidesPerView={1}
@@ -76,11 +76,11 @@ const CourseSlider = ({ Courses = [], title = "Featured Courses" }) => {
           >
             {Courses.map((course, i) => (
               <SwiperSlide key={i} className="h-auto">
-                <div className="group transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+                <div className="group transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl rounded-2xl overflow-hidden p-4 ">
                   <CourseCard
                     course={course}
                     Height="h-[280px]"
-                    className="shadow-lg hover:shadow-xl transition-shadow duration-300"
+                    className="shadow-lg hover:shadow-xl transition-shadow duration-300 "
                   />
                 </div>
               </SwiperSlide>
@@ -130,7 +130,7 @@ const CourseSlider = ({ Courses = [], title = "Featured Courses" }) => {
       )}
 
       {/* Custom Styles */}
-      <style jsx>{`
+      <style>{`
         .custom-bullet {
           background: rgba(99, 102, 241, 0.3) !important;
           width: 12px !important;

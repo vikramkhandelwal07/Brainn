@@ -47,7 +47,7 @@ const Catalog = () => {
 
   if (loading || !catalogPageData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
@@ -65,10 +65,11 @@ const Catalog = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-black via-blue-900 to-black overflow-hidden ">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%221%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-5">
         </div>
+
       {/* Floating Elements */}
       <div className="absolute top-20 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse-slow"></div>
       <div className="absolute bottom-20 right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-xl animate-pulse-delay"></div>
@@ -118,28 +119,28 @@ const Catalog = () => {
     </div >
 
       {/* Section 1 */ }
-      < div className = "mx-auto box-content w-full max-w-maxContentTab px-4 py-16 lg:max-w-maxContent bg-gradient-to-b from-gray-50 to-white" >
+      < div className = "mx-auto box-content w-full max-w-maxContentTab px-4 py-16 lg:max-w-maxContent bg-black" >
         <div className="mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold font-poppins text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold font-poppins text-white mb-2">
             Courses to get you started
           </h2>
-          <p className="text-gray-600 max-w-2xl font-poppins">
+          <p className="text-gray-400 max-w-2xl font-poppins text-md">
             Choose from our carefully curated selection of courses designed to help you begin your learning journey
           </p>
         </div>
 
   {/* Enhanced Tab Navigation */ }
         <div className="mb-8">
-          <div className="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-xl w-fit">
+          <div className="flex flex-wrap gap-2 p-1 bg-gray-300 rounded-xl w-fit">
             <button
               className={`px-6 py-3 rounded-lg font-medium font-poppins text-sm transition-all duration-300 ${
                 active === 1
-                  ? "bg-white text-blue-600 shadow-md transform scale-105"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  ? "bg-white/50 text-blue-600 shadow-md transform scale-105"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
               }`}
               onClick={() => setActive(1)}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 ">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
@@ -149,7 +150,7 @@ const Catalog = () => {
             <button
               className={`px-6 py-3 rounded-lg font-medium font-poppins text-sm transition-all duration-300 ${
                 active === 2
-                  ? "bg-white text-blue-600 shadow-md transform scale-105"
+                  ? "bg-white/50 text-blue-600 shadow-md transform scale-105"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
               onClick={() => setActive(2)}
@@ -164,7 +165,7 @@ const Catalog = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-gray-950 rounded-2xl shadow-sm p-6">
           <CourseSlider
             Courses={catalogPageData?.data?.selectedCategory?.courses}
             title=""
@@ -173,19 +174,19 @@ const Catalog = () => {
       </div >
 
   {/* Section 2 */ }
-  < div className = "mx-auto box-content w-full max-w-maxContentTab px-4 py-16 lg:max-w-maxContent bg-gray-50" >
+  < div className = "mx-auto box-content w-full max-w-maxContentTab px-4 py-16 lg:max-w-maxContent bg-black" >
         <div className="mb-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold font-poppins text-gray-900 mb-4">
-            Top courses in {catalogPageData?.data?.differentCategory?.name}
+          <h2 className="text-3xl md:text-4xl font-bold font-poppins text-white mb-4">
+            Top courses in {catalogPageData?.data?.selectedCategory?.name}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto font-poppins">
+          <p className="text-gray-100 max-w-2xl mx-auto font-poppins">
             Expand your knowledge with these highly-rated courses from related categories
           </p>
         </div>
         
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-gray-950 rounded-2xl shadow-sm p-6">
           <CourseSlider
-            Courses={catalogPageData?.data?.differentCategory?.courses}
+            Courses={catalogPageData?.data?.selectedCategory?.courses}
             title=""
           />
         </div>
@@ -202,13 +203,13 @@ const Catalog = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {catalogPageData?.data?.mostSellingCourses
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 items-center">
+          {catalogPageData?.data?.topSellingCourses
             ?.slice(0, 4)
             .map((course, i) => (
               <div key={i} className="group">
-                <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                  <CourseCard course={course} Height={"h-[400px]"} />
+                <div className="bg-gray-950 rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                  <CourseCard  course={course} Height={"h-[400px]"} />
                 </div>
               </div>
             ))}
@@ -216,12 +217,12 @@ const Catalog = () => {
 
 {/* Call to Action */ }
 <div className="mt-16 text-center">
-  <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
+  <div className="bg-gradient-to-br from-gray-900 via-black to-blue-900 rounded-2xl p-8 text-white">
     <h3 className="text-2xl font-bold font-poppins mb-4">Ready to start learning?</h3>
     <p className="text-blue-100 font-poppins mb-6 max-w-2xl mx-auto">
       Join thousands of students who have already transformed their careers with our comprehensive courses
     </p>
-    <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold font-poppins hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl">
+    <button className="bg-white text-blue-600 px-8 py-3 h-16 rounded-2xl font-semibold font-poppins hover:bg-gray-50 transition-colors duration-300 shadow-lg hover:shadow-xl">
       Browse All Courses
     </button>
   </div>
