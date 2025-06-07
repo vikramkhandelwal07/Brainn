@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-
+import { User, Calendar, Phone, FileText, Users, Github, Linkedin, Twitter, Link2 } from "lucide-react"
 import { updateProfile } from "../../../../services/settingsApi"
 import IconButton from "../../../common/IconButton"
 
@@ -20,179 +20,416 @@ export default function EditProfile() {
   } = useForm()
 
   const submitProfileForm = async (data) => {
-    // console.log("Form Data - ", data)
+    const cleanData = (obj) => {
+      const cleaned = {};
+      Object.keys(obj).forEach(key => {
+        if (obj[key] !== "" && obj[key] !== null && obj[key] !== undefined) {
+          if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+            const cleanedNested = cleanData(obj[key]);
+            if (Object.keys(cleanedNested).length > 0) {
+              cleaned[key] = cleanedNested;
+            }
+          } else {
+            cleaned[key] = obj[key];
+          }
+        }
+      });
+      return cleaned;
+    }
+
+    console.log("User before update:", user);
+    console.log("Form data received:", data);
+
+    const updatedData = cleanData({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      about: data.about,
+      contactNumber: data.contactNumber,
+      gender: data.gender,
+      dateOfBirth: data.dateOfBirth,
+      location: data.location,
+      socialLinks: {
+        github: data.github,
+        linkedin: data.linkedin,
+        twitter: data.twitter,
+      },
+    });
+
+    console.log("Cleaned data to send:", updatedData);
+
     try {
-      dispatch(updateProfile(token, data))
+      console.log("Dispatching updateProfile action...");
+      await dispatch(updateProfile(token, updatedData))
+
+      // Check user state after dispatch
+      console.log("User after update dispatch:", user);
+
+      // Add a small delay to ensure state update completes
+      setTimeout(() => {
+        console.log("Navigating to profile page...");
+        navigate("/dashboard/my-profile")
+      }, 200);
+
     } catch (error) {
       console.log("ERROR MESSAGE - ", error.message)
     }
   }
   return (
-    <>
-      <form onSubmit={handleSubmit(submitProfileForm)}>
-        {/* Profile Information */}
-        <div className="my-10 flex flex-col gap-y-6 rounded-md border-[1px] border-gray-700 bg-gray-800 p-8 px-12">
-          <h2 className="text-lg font-semibold text-gray-100">
-            Profile Information
-          </h2>
-          <div className="flex flex-col gap-5 lg:flex-row">
-            <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="firstName" className="lable-style">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                id="firstName"
-                placeholder="Enter first name"
-                className="form-style"
-                {...register("firstName", { required: true })}
-                defaultValue={user?.firstName}
-              />
-              {errors.firstName && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your first name.
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="lastName" className="lable-style">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                id="lastName"
-                placeholder="Enter first name"
-                className="form-style"
-                {...register("lastName", { required: true })}
-                defaultValue={user?.lastName}
-              />
-              {errors.lastName && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your last name.
-                </span>
-              )}
-            </div>
-          </div>
+    <div className="relative">
+      <form onSubmit={handleSubmit(submitProfileForm)} className="space-y-6">
+        {/* Profile Information Card */}
+        <div className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-gray-800/90 via-gray-700/90 to-gray-800/90 backdrop-blur-sm shadow-2xl transition-all duration-300 hover:border-purple-400/30 hover:shadow-purple-500/10">
+          {/* Animated Background Effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-          <div className="flex flex-col gap-5 lg:flex-row">
-            <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="dateOfBirth" className="lable-style">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                id="dateOfBirth"
-                className="form-style"
-                {...register("dateOfBirth", {
-                  required: {
-                    value: true,
-                    message: "Please enter your Date of Birth.",
-                  },
-                  max: {
-                    value: new Date().toISOString().split("T")[0],
-                    message: "Date of Birth cannot be in the future.",
-                  },
-                })}
-                defaultValue={user?.additionalDetails?.dateOfBirth}
-              />
-              {errors.dateOfBirth && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  {errors.dateOfBirth.message}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="gender" className="lable-style">
-                Gender
-              </label>
-              <select
-                type="text"
-                name="gender"
-                id="gender"
-                className="form-style"
-                {...register("gender", { required: true })}
-                defaultValue={user?.additionalDetails?.gender}
-              >
-                {genders.map((ele, i) => {
-                  return (
-                    <option key={i} value={ele}>
-                      {ele}
-                    </option>
-                  )
-                })}
-              </select>
-              {errors.gender && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your Date of Birth.
-                </span>
-              )}
-            </div>
-          </div>
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-500/10 to-transparent rounded-full blur-2xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-full blur-2xl"></div>
 
-          <div className="flex flex-col gap-5 lg:flex-row">
-            <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="contactNumber" className="lable-style">
-                Contact Number
-              </label>
-              <input
-                type="tel"
-                name="contactNumber"
-                id="contactNumber"
-                placeholder="Enter Contact Number"
-                className="form-style"
-                {...register("contactNumber", {
-                  required: {
-                    value: true,
-                    message: "Please enter your Contact Number.",
-                  },
-                  maxLength: { value: 12, message: "Invalid Contact Number" },
-                  minLength: { value: 10, message: "Invalid Contact Number" },
-                })}
-                defaultValue={user?.additionalDetails?.contactNumber}
-              />
-              {errors.contactNumber && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  {errors.contactNumber.message}
-                </span>
-              )}
+          {/* Card Content */}
+          <div className="relative p-8 space-y-8">
+            {/* Personal Information Section */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-xl border border-purple-500/20">
+                  <User className="w-6 h-6 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Personal Information</h3>
+                  <p className="text-sm text-gray-400">Update your basic details</p>
+                </div>
+              </div>
+
+              {/* Name Fields */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label htmlFor="firstName" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                    First Name
+                  </label>
+                  <div className="relative group/input">
+                    <input
+                      type="text"
+                      name="firstName"
+                      id="firstName"
+                      placeholder="Enter your first name"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 group-hover/input:shadow-lg"
+                      {...register("firstName", { required: true })}
+                      defaultValue={user?.firstName}
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/5 to-blue-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.firstName && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      Please enter your first name.
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="lastName" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                    Last Name
+                  </label>
+                  <div className="relative group/input">
+                    <input
+                      type="text"
+                      name="lastName"
+                      id="lastName"
+                      placeholder="Enter your last name"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 group-hover/input:shadow-lg"
+                      {...register("lastName", { required: true })}
+                      defaultValue={user?.lastName}
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/5 to-blue-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.lastName && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      Please enter your last name.
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="about" className="lable-style">
-                About
-              </label>
-              <input
-                type="text"
-                name="about"
-                id="about"
-                placeholder="Enter Bio Details"
-                className="form-style"
-                {...register("about", { required: true })}
-                defaultValue={user?.additionalDetails?.about}
-              />
-              {errors.about && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your About.
-                </span>
-              )}
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200/30"></div>
+              </div>
+              <div className="relative flex justify-center text-md">
+                <span className="px-4 py-2 rounded-full bg-white/60 text-black">Additional Details</span>
+              </div>
+            </div>
+
+            {/* Additional Details Section */}
+            <div className="space-y-6">
+              {/* Date of Birth and Gender */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label htmlFor="dateOfBirth" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <Calendar className="w-4 h-4 text-green-400" />
+                    Date of Birth
+                  </label>
+                  <div className="relative group/input">
+                    <input
+                      type="date"
+                      name="dateOfBirth"
+                      id="dateOfBirth"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 group-hover/input:shadow-lg"
+                      {...register("dateOfBirth", {
+                        required: {
+                          value: true,
+                          message: "Please enter your Date of Birth.",
+                        },
+                        max: {
+                          value: new Date().toISOString().split("T")[0],
+                          message: "Date of Birth cannot be in the future.",
+                        },
+                      })}
+                      defaultValue={user?.additionalInfo?.dateOfBirth} // Fixed: changed from additonalInfo to additionalInfo
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.dateOfBirth && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      {errors.dateOfBirth.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="gender" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <Users className="w-4 h-4 text-blue-400" />
+                    Gender
+                  </label>
+                  <div className="relative group/input">
+                    <select
+                      name="gender"
+                      id="gender"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 appearance-none cursor-pointer group-hover/input:shadow-lg"
+                      {...register("gender", { required: true })}
+                      defaultValue={user?.additionalInfo?.gender} // Fixed: changed from additonalInfo to additionalInfo
+                    >
+                      <option value="" className="bg-gray-800">Select Gender</option>
+                      {genders.map((ele, i) => {
+                        return (
+                          <option key={i} value={ele} className="bg-gray-800">
+                            {ele}
+                          </option>
+                        )
+                      })}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400 group-hover/input:text-gray-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.gender && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      Please select your gender.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Contact and About */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label htmlFor="contactNumber" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <Phone className="w-4 h-4 text-orange-400" />
+                    Contact Number
+                  </label>
+                  <div className="relative group/input">
+                    <input
+                      type="tel"
+                      name="contactNumber"
+                      id="contactNumber"
+                      placeholder="Enter your contact number"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 group-hover/input:shadow-lg"
+                      {...register("contactNumber", {
+                        required: {
+                          value: true,
+                          message: "Please enter your Contact Number.",
+                        },
+                        maxLength: { value: 12, message: "Invalid Contact Number" },
+                        minLength: { value: 10, message: "Invalid Contact Number" },
+                      })}
+                      defaultValue={user?.additionalInfo?.contactNumber} // Fixed: changed from additonalInfo to additionalInfo
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-amber-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.contactNumber && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      {errors.contactNumber.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="about" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <FileText className="w-4 h-4 text-teal-400" />
+                    About Yourself
+                  </label>
+                  <div className="relative group/input">
+                    <textarea
+                      name="about"
+                      id="about"
+                      placeholder="Tell us about yourself..."
+                      rows="4"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 resize-none group-hover/input:shadow-lg"
+                      {...register("about", { required: true })}
+                      defaultValue={user?.additionalInfo?.about} // Fixed: changed from additonalInfo to additionalInfo
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-500/5 to-cyan-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.about && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      Please enter your about section.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200/30"></div>
+                </div>
+                <div className="relative flex justify-center text-md">
+                  <span className="px-4 py-2 rounded-full bg-white/60 text-black">Social Links</span>
+                </div>
+              </div>
+
+              {/* Social Links Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label htmlFor="github" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <Github className="w-4 h-4 text-gray-400" />
+                    GitHub Profile
+                  </label>
+                  <div className="relative group/input">
+                    <input
+                      type="url"
+                      name="github"
+                      id="github"
+                      placeholder="https://github.com/username"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 group-hover/input:shadow-lg"
+                      {...register("github", {
+                        pattern: {
+                          value: /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/,
+                          message: "Please enter a valid GitHub URL"
+                        }
+                      })}
+                      defaultValue={user?.additionalInfo?.socialLinks?.github} // Fixed: changed from additonalInfo to additionalInfo
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-gray-500/5 to-slate-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.github && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      {errors.github.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="linkedin" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <Linkedin className="w-4 h-4 text-blue-500" />
+                    LinkedIn Profile
+                  </label>
+                  <div className="relative group/input">
+                    <input
+                      type="url"
+                      name="linkedin"
+                      id="linkedin"
+                      placeholder="https://linkedin.com/in/username"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 group-hover/input:shadow-lg"
+                      {...register("linkedin", {
+                        pattern: {
+                          value: /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/,
+                          message: "Please enter a valid LinkedIn URL"
+                        }
+                      })}
+                      defaultValue={user?.additionalInfo?.socialLinks?.linkedin} // Fixed: changed from additonalInfo to additionalInfo
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-sky-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.linkedin && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      {errors.linkedin.message}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="twitter" className="flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <Twitter className="w-4 h-4 text-sky-400" />
+                    Twitter Profile
+                  </label>
+                  <div className="relative group/input">
+                    <input
+                      type="url"
+                      name="twitter"
+                      id="twitter"
+                      placeholder="https://twitter.com/username"
+                      className="w-full px-4 py-4 bg-gray-700/40 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-400/50 transition-all duration-300 hover:bg-gray-700/60 hover:border-gray-500/70 group-hover/input:shadow-lg"
+                      {...register("twitter", {
+                        pattern: {
+                          value: /^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]+\/?$/,
+                          message: "Please enter a valid Twitter URL"
+                        }
+                      })}
+                      defaultValue={user?.additionalInfo?.socialLinks?.twitter} // Fixed: changed from additonalInfo to additionalInfo
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-sky-500/5 to-cyan-500/5 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                  {errors.twitter && (
+                    <div className="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-500/20 px-3 py-2 rounded-lg">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                      {errors.twitter.message}
+                    </div>
+                  )}
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6">
           <button
+            type="button"
             onClick={() => {
               navigate("/dashboard/my-profile")
             }}
-            className="cursor-pointer rounded-md bg-gray-700 py-2 px-5 font-semibold text-gray-1000"
+            className="h-[3.2rem] mt-2 group relative overflow-hidden rounded-lg border-2 border-white bg-transparent hover:bg-gray-600 transition-all duration-300 px-6 font-medium text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            Cancel
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-600/20 to-gray-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <span className="relative">Cancel</span>
           </button>
-          <IconButton type="submit" text="Save" />
+          <div className="transform hover:scale-105 transition-transform duration-300 py-2">
+            <IconButton type="submit" text="Save Changes" size="lg" fullWidth />
+          </div>
         </div>
       </form>
-    </>
+
+      {/* Floating Status Indicators */}
+      <div className="absolute top-0 right-0 flex gap-2">
+        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-300"></div>
+        <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-700"></div>
+      </div>
+    </div>
   )
 }

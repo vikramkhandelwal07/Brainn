@@ -10,6 +10,7 @@ const {
   UPDATE_PROFILE_API,
   CHANGE_PASSWORD_API,
   DELETE_PROFILE_API,
+  GET_USER_DETAILS_API,
 } = settingsEndpoints;
 
 export function updateDisplayPicture(token, formData) {
@@ -25,21 +26,54 @@ export function updateDisplayPicture(token, formData) {
           Authorization: `Bearer ${token}`,
         }
       );
-      console.log(
-        "UPDATE_DISPLAY_PICTURE_API API RESPONSE",
-        response
-      );
+      console.log("UPDATE_DISPLAY_PICTURE_API API RESPONSE", response);
 
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
+
+      // Update localStorage when display picture is updated
+      const updatedUser = response.data.data;
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
       toast.success("Display Picture Updated Successfully");
-      dispatch(setUser(response.data.data));
+      dispatch(setUser(updatedUser));
     } catch (error) {
       console.log("UPDATE_DISPLAY_PICTURE_API API ERROR", error);
       toast.error("Could Not Update Display Picture");
     }
     toast.dismiss(toastId);
+  };
+}
+
+// In your settingsApi.js file
+export function getUserProfile(token) {
+  return async (dispatch) => {
+    try {
+      const response = await apiConnector("GET", GET_USER_DETAILS_API, null, {
+        Authorization: `Bearer ${token}`,
+      });
+
+      console.log("GET_USER_DETAILS_API API RESPONSE", response);
+
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+
+      const user = response.data.data;
+      const userImage = user.image
+        ? user.image
+        : `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName} ${user.lastName}`;
+
+      const userWithImage = { ...user, image: userImage };
+
+      // Save user to localStorage when fetched from API
+      localStorage.setItem("user", JSON.stringify(userWithImage));
+
+      dispatch(setUser(userWithImage));
+    } catch (error) {
+      console.log("GET_USER_DETAILS_API API ERROR", error);
+    }
   };
 }
 
@@ -55,12 +89,33 @@ export function updateProfile(token, formData) {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
+
       const userImage = response.data.updatedUserDetails.image
         ? response.data.updatedUserDetails.image
         : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.updatedUserDetails.firstName} ${response.data.updatedUserDetails.lastName}`;
-      dispatch(
-        setUser({ ...response.data.updatedUserDetails, image: userImage })
+
+      const updatedUser = {
+        ...response.data.updatedUserDetails,
+        image: userImage,
+      };
+
+      console.log("About to update localStorage with:", updatedUser);
+      console.log(
+        "Current localStorage before update:",
+        localStorage.getItem("user")
       );
+
+      dispatch(setUser(updatedUser));
+
+      // Update localStorage
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      console.log("localStorage after update:", localStorage.getItem("user"));
+      console.log(
+        "Parsed localStorage:",
+        JSON.parse(localStorage.getItem("user"))
+      );
+
       toast.success("Profile Updated Successfully");
     } catch (error) {
       console.log("UPDATE_PROFILE_API API ERROR", error);

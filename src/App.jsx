@@ -15,7 +15,7 @@ import Error from "./pages/Error404";
 import Catalog from "./pages/Catalog";
 import CourseDetails from "./pages/CourseDetails";
 import TermsAndConditions from "./pages/legal/TermsAndCondition";
-import {ACCOUNT_TYPE} from "./utils/Constants";
+import { ACCOUNT_TYPE } from "./utils/Constants";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import VerifyEmail from "./pages/VerifyEmail";
 import UpdatePassword from "./pages/UpdatePassword";
@@ -26,8 +26,11 @@ import Settings from "./components/sections/Dashbaord/Settings/Settings"
 import Loading from "./components/common/LoadingSpinner";
 import RateUs from "./pages/RateUs";
 import { apiConnector } from './services/apiConnector';
-import { setUser } from './slices/userProfileSlice'; 
+import { setUser } from './slices/userProfileSlice';
 import { setToken } from './slices/authSlice';
+import { getUserProfile } from './services/settingsApi';
+
+
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,27 +41,43 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 2000); 
+    }, 2000);
   }, []);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
 
+    // Restore token if available
     if (savedToken && !token) {
-      dispatch(setToken(JSON.parse(savedToken)));
+      const parsedToken = JSON.parse(savedToken);
+      dispatch(setToken(parsedToken));
     }
 
+    // Restore user if available
     if (savedUser && !user) {
-      dispatch(setUser(JSON.parse(savedUser)));
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        dispatch(setUser(parsedUser));
+      } catch (error) {
+        console.log("Error parsing saved user data:", error);
+        localStorage.removeItem('user'); // Remove corrupted data
+      }
     }
-  }, []);
-  
-  
+
+    // If we have token but no user, fetch fresh user data
+    if (savedToken && !savedUser) {
+      const parsedToken = JSON.parse(savedToken);
+      console.log("Fetching fresh user data from API...");
+      dispatch(getUserProfile(parsedToken));
+    }
+  }, [token, user, dispatch]);
+
+
   if (loading) {
     return (
       <div>
-       <Loading />
+        <Loading />
       </div>
     );
   }

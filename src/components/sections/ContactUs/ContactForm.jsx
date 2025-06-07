@@ -121,7 +121,7 @@ const ContactUsForm = () => {
 
           {/* Phone Number Field */}
           <div className="space-y-2">
-            <label htmlFor="phonenumber" className="block text-sm font-semibold text-gray-200">
+            <label htmlFor="contactNumber" className="block text-sm font-semibold text-gray-200">
               Phone Number <span className="text-red-400">*</span>
             </label>
             <div className="flex gap-3">
@@ -143,8 +143,8 @@ const ContactUsForm = () => {
               <div className="flex-1">
                 <input
                   type="tel"
-                  name="phonenumber"
-                  id="phonenumber"
+                  name="contactNumber"
+                  id="contactNumber"
                   placeholder="12345 67890"
                   className="w-full px-4 py-3 bg-gray-800/40 border border-gray-600/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-white placeholder-gray-400 backdrop-blur-sm hover:bg-gray-800/60"
                   {...register("phoneNo", {

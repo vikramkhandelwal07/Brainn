@@ -5,16 +5,34 @@ const { imageUploadCloudinary } = require("../utils/CloudinaryUploader");
 
 exports.updateProfile = async (req, res) => {
   try {
-    const {
-      gender = "",
-      dob = "",
-      contactNumber = "",
-      about = "",
-      location = "",
-      socialLinks = {},
-    } = req.body;
-
     const userId = req.user.id;
+
+    // Handle both flat and nested data structures
+    let profileData = {};
+
+    // Check if data comes in nested format (from your frontend)
+    if (req.body.additionalInfo) {
+      profileData = req.body.additionalInfo;
+    } else {
+      // Handle flat format (direct fields)
+      const {
+        gender = "",
+        dateOfBirth = "",
+        contactNumber = "",
+        about = "",
+        location = "",
+        socialLinks = {},
+      } = req.body;
+
+      profileData = {
+        gender,
+        dateOfBirth: dateOfBirth,
+        contactNumber,
+        about,
+        location,
+        socialLinks,
+      };
+    }
 
     // Fetch user and their profile
     const userDetails = await User.findById(userId);
@@ -33,16 +51,72 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    // Update fields
-    profile.gender = gender;
-    profile.dateOfBirth = dob;
-    profile.contactNumber = contactNumber;
-    profile.about = about;
-    profile.location = location;
-    profile.socialLinks = socialLinks;
+    // Update fields only if they have valid values
+    if (profileData.gender && profileData.gender.trim() !== "") {
+      profile.gender = profileData.gender;
+    }
 
+    if (profileData.dateOfBirth && profileData.dateOfBirth.trim() !== "") {
+      profile.dateOfBirth = profileData.dateOfBirth;
+    }
+
+    if (profileData.contactNumber && profileData.contactNumber.trim() !== "") {
+      profile.contactNumber = profileData.contactNumber;
+    }
+
+    if (profileData.about && profileData.about.trim() !== "") {
+      profile.about = profileData.about;
+    }
+
+    if (profileData.location && profileData.location.trim() !== "") {
+      profile.location = profileData.location;
+    }
+
+    // Handle social links - only update non-empty values
+    if (
+      profileData.socialLinks &&
+      typeof profileData.socialLinks === "object"
+    ) {
+      const currentSocialLinks = profile.socialLinks || {};
+
+      if (
+        profileData.socialLinks.linkedin &&
+        profileData.socialLinks.linkedin.trim() !== ""
+      ) {
+        currentSocialLinks.linkedin = profileData.socialLinks.linkedin;
+      }
+
+      if (
+        profileData.socialLinks.github &&
+        profileData.socialLinks.github.trim() !== ""
+      ) {
+        currentSocialLinks.github = profileData.socialLinks.github;
+      }
+
+      if (
+        profileData.socialLinks.twitter &&
+        profileData.socialLinks.twitter.trim() !== ""
+      ) {
+        currentSocialLinks.twitter = profileData.socialLinks.twitter;
+      }
+
+      profile.socialLinks = currentSocialLinks;
+    }
+
+    // Also update user's first and last name if provided
+    if (req.body.firstName && req.body.firstName.trim() !== "") {
+      userDetails.firstName = req.body.firstName;
+    }
+
+    if (req.body.lastName && req.body.lastName.trim() !== "") {
+      userDetails.lastName = req.body.lastName;
+    }
+
+    // Save both profile and user
     await profile.save();
+    await userDetails.save();
 
+    // Fetch updated user with populated profile
     const updatedUserDetails = await User.findById(userId)
       .populate("additionalInfo")
       .exec();
@@ -54,6 +128,21 @@ exports.updateProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating profile:", error);
+
+    // Handle validation errors specifically
+    if (error.name === "ValidationError") {
+      const errors = {};
+      Object.keys(error.errors).forEach((key) => {
+        errors[key] = error.errors[key].message;
+      });
+
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: errors,
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: "Something went wrong while updating the profile",

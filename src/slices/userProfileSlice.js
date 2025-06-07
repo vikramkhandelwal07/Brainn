@@ -4,10 +4,11 @@ const initialState = {
   user: localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null,
+  loading: false,
 };
 
-const userProfileSlice = createSlice({
-  name: "userProfile",
+const profileSlice = createSlice({
+  name: "profile",
   initialState: initialState,
   reducers: {
     setUser(state, value) {
@@ -15,9 +16,9 @@ const userProfileSlice = createSlice({
     },
     setLoading(state, value) {
       state.loading = value.payload;
-    }
+    },
   },
 });
 
-export const { setUser, setLoading } = userProfileSlice.actions;
-export default userProfileSlice.reducer;
+export const { setUser, setLoading } = profileSlice.actions;
+export default profileSlice.reducer;

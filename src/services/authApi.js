@@ -94,10 +94,12 @@ export const login = (email, password, navigate) => async (dispatch) => {
       user?.image ||
       `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName} ${user.lastName}`;
 
+    const userWithImage = { ...user, image: userImage };
+
     dispatch(setToken(token));
-    dispatch(setUser({ ...user, image: userImage }));
+    dispatch(setUser(userWithImage));
     localStorage.setItem("token", JSON.stringify(token));
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(userWithImage)); // Fixed this line
 
     toast.success("Login successful");
     navigate("/dashboard/my-profile");

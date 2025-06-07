@@ -125,7 +125,7 @@ export default function IconButton({
       </div>
 
       {/* Button content */}
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex gap-2 items-center justify-center">
         {renderContent()}
       </div>
     </button>

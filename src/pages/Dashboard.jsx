@@ -9,7 +9,7 @@ function Dashboard() {
 
   if (profileLoading || authLoading) {
     return (
-      <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-black ">
         <div className="text-center">
           {/* Enhanced Loading Spinner */}
           <div className="relative mb-6">
@@ -55,7 +55,7 @@ function Dashboard() {
       {/* Main Content Area */}
       <div className="flex-1 relative overflow-auto">
         {/* Content Background Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50/5 to-transparent"></div>
+        <div className="absolute inset-0 bg-black"></div>
 
         {/* Scrollable Content Container */}
         <div className="relative z-10 min-h-full">
@@ -63,7 +63,7 @@ function Dashboard() {
             {/* Content Wrapper with Glass Effect */}
             <div className="relative">
               {/* Subtle Background Card */}
-              <div className="absolute inset-0 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-2xl"></div>
+              <div className="absolute inset-0 rounded-2xl bg-black backdrop-blur-sm border border-white/10 shadow-2xl"></div>
 
               {/* Main Content */}
               <div className="relative rounded-2xl p-6 sm:p-8 lg:p-10">
