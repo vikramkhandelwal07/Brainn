@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useCallback, useMemo } from "react"
 import { BiInfoCircle } from "react-icons/bi"
@@ -18,6 +19,7 @@ import { buyCourse } from "../services/studentApi"
 import GetAverageRating from "../utils/AverageRating"
 import Error from "./Error404"
 
+
 function CourseDetails() {
   const { user } = useSelector((state) => state.userProfile)
   const { token } = useSelector((state) => state.auth)
@@ -26,88 +28,194 @@ function CourseDetails() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  // Getting courseId from url parameter
   const { courseId } = useParams()
 
-  // State management
   const [response, setResponse] = useState(null)
-  const [Confirmation, setConfirmation] = useState(null)
+  const [courseLoading, setCourseLoading] = useState(true)
+  const [confirmationModal, setConfirmationModal] = useState(null) // Fixed naming conflict
   const [isActive, setIsActive] = useState([])
   const [fetchError, setFetchError] = useState(null)
+
+  // Generate gradient color based on thumbnail or random
+  const [adaptiveGradientColor, setAdaptiveGradientColor] = useState("via-pink-800")
+
+  // Function to extract dominant color from image
+  const extractDominantColor = useCallback((imageUrl) => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.crossOrigin = "anonymous"
+
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+
+          canvas.width = img.width
+          canvas.height = img.height
+          ctx.drawImage(img, 0, 0)
+
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+          const data = imageData.data
+
+          // Color frequency map
+          const colorMap = {}
+
+          // Sample pixels (every 10th pixel for performance)
+          for (let i = 0; i < data.length; i += 40) {
+            const r = data[i]
+            const g = data[i + 1]
+            const b = data[i + 2]
+            const alpha = data[i + 3]
+
+            // Skip transparent pixels and very dark/light pixels
+            if (alpha < 128 || (r + g + b) < 50 || (r + g + b) > 650) continue
+
+            // Group similar colors (reduce precision)
+            const key = `${Math.floor(r / 30)}-${Math.floor(g / 30)}-${Math.floor(b / 30)}`
+            colorMap[key] = (colorMap[key] || 0) + 1
+          }
+
+          // Find most frequent color
+          let dominantColor = null
+          let maxCount = 0
+
+          for (const [colorKey, count] of Object.entries(colorMap)) {
+            if (count > maxCount) {
+              maxCount = count
+              const [r, g, b] = colorKey.split('-').map(x => parseInt(x) * 30)
+              dominantColor = { r, g, b }
+            }
+          }
+
+          resolve(dominantColor)
+        } catch (error) {
+          console.log('Color extraction failed:', error)
+          resolve(null)
+        }
+      }
+
+      img.onerror = () => resolve(null)
+      img.src = imageUrl
+    })
+  }, [])
+
+  // Function to map RGB to closest Tailwind color
+  const mapToTailwindColor = useCallback((rgb) => {
+    if (!rgb) return 'via-pink-800'
+
+    const { r, g, b } = rgb
+
+    // Color mapping based on dominant channel and saturation
+    const max = Math.max(r, g, b)
+    const min = Math.min(r, g, b)
+    const saturation = max === 0 ? 0 : (max - min) / max
+
+    // If very low saturation, use neutral colors
+    if (saturation < 0.3) {
+      return 'via-gray-800'
+    }
+
+    // Determine dominant color channel
+    if (r > g && r > b) {
+      // Red dominant
+      if (g > b * 1.2) return 'via-orange-800'
+      if (b > g * 1.2) return 'via-pink-800'
+      return 'via-red-800'
+    } else if (g > b) {
+      // Green dominant
+      if (r > b * 1.2) return 'via-yellow-800'
+      if (b > r * 1.1) return 'via-teal-800'
+      return 'via-green-800'
+    } else {
+      // Blue dominant
+      if (r > g * 1.2) return 'via-purple-800'
+      if (g > r * 1.1) return 'via-cyan-800'
+      return 'via-blue-800'
+    }
+  }, [])
+
+  // Effect to extract color from thumbnail when available
+  useEffect(() => {
+    const processImage = async () => {
+      if (response?.data?.thumbnail) {
+        try {
+          const dominantColor = await extractDominantColor(response.data.thumbnail)
+          const tailwindColor = mapToTailwindColor(dominantColor)
+          setAdaptiveGradientColor(tailwindColor)
+        } catch (error) {
+          console.log('Failed to extract color from thumbnail:', error)
+          // Fallback to random color
+          const fallbackColors = [
+            'via-pink-800', 'via-purple-800', 'via-blue-800', 'via-indigo-800',
+            'via-red-800', 'via-orange-800', 'via-green-800', 'via-teal-800'
+          ]
+          const randomColor = fallbackColors[Math.floor(Math.random() * fallbackColors.length)]
+          setAdaptiveGradientColor(randomColor)
+        }
+      } else {
+        // No thumbnail, use random color
+        const fallbackColors = [
+          'via-pink-800', 'via-purple-800', 'via-blue-800', 'via-indigo-800',
+          'via-red-800', 'via-orange-800', 'via-green-800', 'via-teal-800'
+        ]
+        const randomColor = fallbackColors[Math.floor(Math.random() * fallbackColors.length)]
+        setAdaptiveGradientColor(randomColor)
+      }
+    }
+
+    if (response?.data) {
+      processImage()
+    }
+  }, [response?.data?.thumbnail, extractDominantColor, mapToTailwindColor])
 
   // Fetch course details with error handling
   useEffect(() => {
     const fetchDetails = async () => {
       if (!courseId) return
-
       try {
         setFetchError(null)
+        setCourseLoading(true)
         const res = await fetchCourseDetails(courseId)
         setResponse(res)
       } catch (error) {
         console.error("Could not fetch Course Details:", error)
         setFetchError("Failed to load course details. Please try again.")
+      } finally {
+        setCourseLoading(false)
       }
     }
 
     fetchDetails()
   }, [courseId])
 
-  // Memoized calculations for performance
+  console.log("response", response)
+
   const avgReviewCount = useMemo(() => {
-    if (!response?.data?.courseDetails?.ratingAndReviews) return 0
-    return GetAverageRating(response.data.courseDetails.ratingAndReviews)
-  }, [response?.data?.courseDetails?.ratingAndReviews])
+    const reviews = response?.data?.ratingAndReviews || []; // Corrected path
+    return GetAverageRating(reviews);
+  }, [response?.data?.ratingAndReviews]);
+
+  const handleActive = (id) => {
+    setIsActive(
+      !isActive.includes(id)
+        ? isActive.concat([id])
+        : isActive.filter((e) => e != id)
+    )
+  }
 
   const totalNoOfLectures = useMemo(() => {
-    if (!response?.data?.courseDetails?.courseContent) return 0
+    const content = response?.data?.courseContent || []; // Corrected path
+    return content.reduce((total, section) => {
+      return total + (section.subSection?.length || 0);
+    }, 0);
+  }, [response?.data?.courseContent]);
 
-    return response.data.courseDetails.courseContent.reduce((total, section) => {
-      return total + (section.subSection?.length || 0)
-    }, 0)
-  }, [response?.data?.courseDetails?.courseContent])
-
-  // Optimized accordion handler
-  const handleActive = useCallback((id) => {
-    setIsActive(prev =>
-      prev.includes(id)
-        ? prev.filter(activeId => activeId !== id)
-        : [...prev, id]
-    )
-  }, [])
-
-  // Collapse all sections handler
-  const handleCollapseAll = useCallback(() => {
+  const handleCollapseAll = () => {
     setIsActive([])
-  }, [])
-
-  // Enhanced buy course handler
-  const handleBuyCourse = useCallback(() => {
-    if (token && user) {
-      buyCourse(token, [courseId], user, navigate, dispatch)
-      return
-    }
-
-    setConfirmation({
-      text1: "You are not logged in!",
-      text2: "Please login to Purchase Course.",
-      btn1Text: "Login",
-      btn2Text: "Cancel",
-      btn1Handler: () => {
-        setConfirmation(null)
-        navigate("/login")
-      },
-      btn2Handler: () => setConfirmation(null),
-    })
-  }, [token, user, courseId, navigate, dispatch])
-
-  // Enhanced modal close handler
-  const handleCloseModal = useCallback(() => {
-    setConfirmation(null)
-  }, [])
+  }
 
   // Loading states
-  if (loading || paymentLoading) {
+  if (loading || courseLoading) {
     return (
       <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
         <div className="spinner"></div>
@@ -115,15 +223,14 @@ function CourseDetails() {
     )
   }
 
-  // Error states
   if (fetchError) {
     return (
       <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
-        <div className="text-center">
-          <p className="text-red-500 text-xl mb-4">{fetchError}</p>
+        <div className="text-center text-red-500">
+          <p>{fetchError}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Retry
           </button>
@@ -131,24 +238,20 @@ function CourseDetails() {
       </div>
     )
   }
-  
-  if (!response || !response.success) {
+
+  if (!response || !response.data || !response.success) {
     return <Error />
   }
 
-  // Destructure course details with fallbacks
-  const courseDetails = response.data?.courseDetails
-  if (!courseDetails) {
-    return <Error />
-  }
-
+  // Safe destructuring after all checks
+  const courseDetails = response.data
   const {
     _id: course_id,
-    courseName = "Course Name Not Available",
-    courseDescription = "No description available",
+    courseName,
+    courseDescription,
     thumbnail,
     price = 0,
-    whatYouWillLearn = "Learning objectives not specified",
+    whatWillYouLearn,
     courseContent = [],
     ratingAndReviews = [],
     instructor = {},
@@ -156,11 +259,40 @@ function CourseDetails() {
     createdAt,
   } = courseDetails
 
-  const instructorName = `${instructor.firstName || ''} ${instructor.lastName || ''}`.trim() || "Unknown Instructor"
+  const instructorName = `${instructor?.firstName || ""} ${instructor?.lastName || ""}`.trim()
+
+  const handleBuyCourse = () => {
+    if (token) {
+      buyCourse(token, [courseId], user, navigate, dispatch)
+      return
+    }
+
+    setConfirmationModal({
+      text1: "You are not logged in!",
+      text2: "Please login to Purchase Course.",
+      btn1Text: "Login",
+      btn2Text: "Cancel",
+      btn1Handler: () => {
+        setConfirmationModal(null)
+        navigate("/login")
+      },
+      btn2Handler: () => setConfirmationModal(null),
+    })
+  }
+
+  if (paymentLoading) {
+    return (
+      <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
+        <div className="spinner"></div>
+      </div>
+    )
+  }
+
+  console.log("CourseDetails response", response)
 
   return (
     <>
-      <div className="relative w-full bg-gray-800">
+      <div className={`relative w-full bg-gradient-to-br from-gray-950 ${adaptiveGradientColor} to-black text-gray-100`}>
         {/* Hero Section */}
         <div className="mx-auto box-content px-4 lg:w-[1260px] 2xl:relative">
           <div className="mx-auto grid min-h-[450px] max-w-maxContentTab justify-items-center py-8 lg:mx-0 lg:justify-items-start lg:py-0 xl:max-w-[810px]">
@@ -185,12 +317,12 @@ function CourseDetails() {
             {/* Course Info */}
             <div className="z-30 my-5 flex flex-col justify-center gap-4 py-5 text-lg text-gray-100">
               <div>
-                <h1 className="text-4xl font-bold text-gray-100 sm:text-[42px] leading-tight">
+                <h1 className="text-6xl font-bold text-white sm:text-[42px] leading-tight">
                   {courseName}
                 </h1>
               </div>
 
-              <p className="text-gray-300 leading-relaxed">{courseDescription}</p>
+              <p className="text-gray-200 leading-relaxed">{courseDescription}</p>
 
               <div className="text-md flex flex-wrap items-center gap-2">
                 <span className="text-yellow-25 font-semibold">{avgReviewCount}</span>
@@ -199,8 +331,9 @@ function CourseDetails() {
                 <span className="text-gray-300">{studentsEnrolled.length} students enrolled</span>
               </div>
 
-              <div>
-                <p className="text-gray-300">Created By {instructorName}</p>
+              <div className="flex flex-row gap-2 items-center">
+                <p className="text-gray-300">Created By : </p>
+                <p className="font-semibold text-white font-poppins mt-1 ">{instructorName}</p>
               </div>
 
               <div className="flex flex-wrap gap-5 text-lg text-gray-300">
@@ -237,7 +370,7 @@ function CourseDetails() {
           <div className="right-[1rem] top-[60px] mx-auto hidden min-h-[600px] w-1/3 max-w-[410px] translate-y-24 md:translate-y-0 lg:absolute lg:block">
             <CourseDetailsCard
               course={courseDetails}
-              setConfirmation={setConfirmation}
+              setConfirmation={setConfirmationModal}
               handleBuyCourse={handleBuyCourse}
             />
           </div>
@@ -252,7 +385,7 @@ function CourseDetails() {
           <section className="my-8 border border-gray-700 p-8 rounded-lg bg-gray-900/50">
             <h2 className="text-3xl font-semibold mb-5">What you'll learn</h2>
             <div className="prose prose-invert max-w-none">
-              <ReactMarkdown>{whatYouWillLearn}</ReactMarkdown>
+              <ReactMarkdown>{whatWillYouLearn}</ReactMarkdown>
             </div>
           </section>
 
@@ -278,57 +411,53 @@ function CourseDetails() {
             </div>
           </section>
 
-            {/* Course Details Accordion */}
-            <div className="py-4">
-              {courseContent.length > 0 ? (
-                courseContent.map((course, index) => (
-                  <CourseAccordionBar
-                    course={course}
-                    key={course._id || index}
-                    isActive={isActive}
-                    handleActive={handleActive}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-8 text-gray-400">
-                  No course content available
-                </div>
-              )}
-            </div>
-
-            {/* Author Details */}
-            <section className="mb-12 py-4">
-              <h2 className="text-[28px] font-semibold mb-4">Author</h2>
-              <div className="flex items-center gap-4 py-4">
-                <img
-                  src={
-                    instructor.image ||
-                    `https://api.dicebear.com/5.x/initials/svg?seed=${instructorName}`
-                  }
-                  alt={`${instructorName} profile`}
-                  className="h-14 w-14 rounded-full object-cover border-2 border-gray-600"
-                  loading="lazy"
+          {/* Course Details Accordion */}
+          <div className="py-4">
+            {courseContent.length > 0 ? (
+              courseContent.map((course, index) => (
+                <CourseAccordionBar
+                  course={course}
+                  key={course._id || index}
+                  isActive={isActive}
+                  handleActive={handleActive}
                 />
-                <p className="text-lg font-medium">{instructorName}</p>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-400">
+                No course content available
               </div>
-              <p className="text-gray-300 leading-relaxed">
-                {instructor?.additionalDetails?.about || "No additional information available about the instructor."}
-              </p>
-            </section>
+            )}
+          </div>
+
+          {/* Author Details */}
+          <section className="mb-12 py-4">
+            <h2 className="text-[28px] font-semibold mb-4">Author</h2>
+            <div className="flex items-center gap-4 py-4">
+              <img
+                src={
+                  instructor.image ||
+                  `https://api.dicebear.com/5.x/initials/svg?seed=${instructorName}`
+                }
+                alt={`${instructorName} profile`}
+                className="h-14 w-14 rounded-full object-cover border-2 border-gray-600"
+                loading="lazy"
+              />
+              <p className="text-lg font-medium">{instructorName}</p>
+            </div>
+            <p className="text-gray-300 leading-relaxed">
+              {instructor?.additionalDetails?.about || "No additional information available about the instructor."}
+            </p>
+          </section>
         </div>
       </div>
 
       <Footer />
 
-  {
-    Confirmation && (
-      <Confirmation
-        modalData={Confirmation}
-        isOpen={!!Confirmation}
-        onClose={handleCloseModal}
-      />
-    )
-  }
+      {confirmationModal && (
+        <Confirmation
+          modalData={confirmationModal}
+        />
+      )}
     </>
   )
 }

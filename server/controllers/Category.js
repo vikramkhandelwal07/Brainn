@@ -73,7 +73,7 @@ exports.completeCategoryPageDetails = async (req, res) => {
       published: true,
     })
       .populate("instructor", "firstName lastName email")
-      .populate("ratingsAndReviews");
+      .populate("ratingAndReviews");
 
     // Get courses from other categories (limit to 5 categories randomly)
     const otherCategories = await Category.find({

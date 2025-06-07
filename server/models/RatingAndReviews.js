@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ratingsAndReviewsSchema = new mongoose.Schema({
+const ratingAndReviewsSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -29,6 +29,6 @@ const ratingsAndReviewsSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Optional: create a compound index to prevent duplicate reviews
-ratingsAndReviewsSchema.index({ user: 1, course: 1 }, { unique: true });
+ratingAndReviewsSchema.index({ user: 1, course: 1 }, { unique: true });
 
-module.exports = mongoose.model("RatingsAndReviews", ratingsAndReviewsSchema);
+module.exports = mongoose.model("RatingAndReviews", ratingAndReviewsSchema);

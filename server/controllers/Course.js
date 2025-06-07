@@ -115,12 +115,12 @@ exports.getAllCourses = async (req, res) => {
         price: true,
         thumbnail: true,
         instructor: true,
-        ratingsAndReviews: true,
+        ratingAndReviews: true,
         studentsEnrolled: true,
       }
     )
       .select(
-        "courseName price thumbnail instructor ratingsAndReviews category"
+        "courseName price thumbnail instructor ratingAndReviews category"
       )
       .populate("instructor", "firstName lastName")
       .populate("category", "name");
@@ -165,7 +165,7 @@ exports.getCompleteCourseDetails = async (req, res) => {
         },
       })
       .populate({
-        path: "ratingsAndReviews",
+        path: "ratingAndReviews",
         populate: {
           path: "user",
           select: "firstName lastName email image",
@@ -208,7 +208,7 @@ exports.getCourseDetails = async (req, res) => {
           model: "SubSection",
         },
       })
-      .populate("ratingsAndReviews")
+      .populate("ratingAndReviews")
       .exec();
 
     if (!course)
@@ -242,7 +242,7 @@ exports.editCourse = async (req, res) => {
       console.log("thumbnail update");
       const thumbnail = req.files.thumbnailImage;
 
-      const thumbnailImage = await uploadImageToCloudinary(
+      const thumbnailImage = await imageUploadCloudinary(
         thumbnail,
         process.env.FOLDER_NAME
       );
@@ -291,7 +291,7 @@ exports.editCourse = async (req, res) => {
         },
       })
       .populate("category")
-      .populate("ratingsAndReviews")
+      .populate("ratingAndReviews")
       .populate({
         path: "courseContent",
         populate: {

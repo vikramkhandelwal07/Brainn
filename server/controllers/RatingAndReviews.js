@@ -1,5 +1,5 @@
 const Course = require("../models/Course");
-const RatingsAndReviews = require("../models/RatingsAndReviews");
+const RatingAndReviews = require("../models/RatingAndReviews");
 
 exports.createRatingReviews = async (req, res) => {
   try {
@@ -14,7 +14,7 @@ exports.createRatingReviews = async (req, res) => {
     }
 
     // Checking if user already reviewed this course
-    const alreadyReviewed = await RatingsAndReviews.findOne({
+    const alreadyReviewed = await RatingAndReviews.findOne({
       user: userId,
       course: courseId,
     });
@@ -26,16 +26,16 @@ exports.createRatingReviews = async (req, res) => {
     }
 
     // Creating and save review
-    const newReview = await RatingsAndReviews.create({
+    const newReview = await RatingAndReviews.create({
       user: userId,
       course: courseId,
       rating,
       review,
     });
 
-    // Pushing into course's ratingsAndReviews array
+    // Pushing into course's ratingAndReviews array
     await Course.findByIdAndUpdate(courseId, {
-      $push: { ratingsAndReviews: newReview._id },
+      $push: { ratingAndReviews: newReview._id },
     });
 
     res.status(200).json({
@@ -54,7 +54,7 @@ exports.createRatingReviews = async (req, res) => {
 
 exports.getAllRatingAndReviews = async (req, res) => {
   try {
-    const reviews = await RatingsAndReviews.find({})
+    const reviews = await RatingAndReviews.find({})
       .populate("user", "firstName lastName email image")
       .populate("course", "courseName thumbnail");
 
@@ -76,7 +76,7 @@ exports.getAvgRatingReviews = async (req, res) => {
   try {
     const { courseId } = req.params;
 
-    const result = await RatingsAndReviews.aggregate([
+    const result = await RatingAndReviews.aggregate([
       { $match: { course: new mongoose.Types.ObjectId(courseId) } },
       {
         $group: {
@@ -112,7 +112,7 @@ exports.getCourseRatingAndReviews = async (req, res) => {
   try {
     const { courseId } = req.params;
 
-    const reviews = await RatingsAndReviews.find({ course: courseId }).populate(
+    const reviews = await RatingAndReviews.find({ course: courseId }).populate(
       "user",
       "firstName lastName image email"
     );
@@ -136,7 +136,7 @@ exports.updateRatingReview = async (req, res) => {
     const { rating, review } = req.body;
     const userId = req.user.id;
 
-    const updatedReview = await RatingsAndReviews.findOneAndUpdate(
+    const updatedReview = await RatingAndReviews.findOneAndUpdate(
       { _id: reviewId, user: userId },
       { rating, review },
       { new: true }
@@ -167,7 +167,7 @@ exports.deleteRatingReview = async (req, res) => {
     const { reviewId } = req.params;
     const userId = req.user.id;
 
-    const review = await RatingsAndReviews.findOneAndDelete({
+    const review = await RatingAndReviews.findOneAndDelete({
       _id: reviewId,
       user: userId,
     });
@@ -181,7 +181,7 @@ exports.deleteRatingReview = async (req, res) => {
 
     // Remove from course too
     await Course.findByIdAndUpdate(review.course, {
-      $pull: { ratingsAndReviews: review._id },
+      $pull: { ratingAndReviews: review._id },
     });
 
     res.status(200).json({
@@ -200,7 +200,7 @@ exports.getMyReviews = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const myReviews = await RatingsAndReviews.find({ user: userId }).populate(
+    const myReviews = await RatingAndReviews.find({ user: userId }).populate(
       "course",
       "courseName thumbnail"
     );
@@ -219,7 +219,7 @@ exports.getMyReviews = async (req, res) => {
 
 exports.getTopRatedCourses = async (req, res) => {
   try {
-    const result = await RatingsAndReviews.aggregate([
+    const result = await RatingAndReviews.aggregate([
       {
         $group: {
           _id: "$course",

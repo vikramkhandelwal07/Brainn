@@ -38,7 +38,7 @@ const {
   deleteRatingReview,
   getMyReviews,
   getTopRatedCourses,
-} = require("../controllers/ReviewsAndRatings");
+} = require("../controllers/RatingAndReviews");
 
 // const { updateCourseProgress } = require("../controllers/CourseProgress");
 
