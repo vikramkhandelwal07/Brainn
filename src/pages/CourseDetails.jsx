@@ -37,7 +37,7 @@ function CourseDetails() {
   const [fetchError, setFetchError] = useState(null)
 
   // Generate gradient color based on thumbnail or random
-  const [adaptiveGradientColor, setAdaptiveGradientColor] = useState("via-pink-800")
+  const [adaptiveGradientColor, setAdaptiveGradientColor] = useState("via-black")
 
   // Function to extract dominant color from image
   const extractDominantColor = useCallback((imageUrl) => {
@@ -292,13 +292,13 @@ function CourseDetails() {
 
   return (
     <>
-      <div className={`relative w-full bg-gradient-to-br from-gray-950 ${adaptiveGradientColor} to-black text-gray-100`}>
+      <div className={`relative w-full bg-gradient-to-tr from-gray-950 ${adaptiveGradientColor} to-black text-gray-100`}>
         {/* Hero Section */}
         <div className="mx-auto box-content px-4 lg:w-[1260px] 2xl:relative">
           <div className="mx-auto grid min-h-[450px] max-w-maxContentTab justify-items-center py-8 lg:mx-0 lg:justify-items-start lg:py-0 xl:max-w-[810px]">
 
             {/* Mobile Thumbnail */}
-            <div className="relative block max-h-[30rem] lg:hidden">
+            <div className="relative block max-h-[30rem] lg:hidden ">
               <div className="absolute bottom-0 left-0 h-full w-full shadow-[#161D29_0px_-64px_36px_-28px_inset]"></div>
               {thumbnail ? (
                 <img
@@ -442,7 +442,7 @@ function CourseDetails() {
                 className="h-14 w-14 rounded-full object-cover border-2 border-gray-600"
                 loading="lazy"
               />
-              <p className="text-lg font-medium">{instructorName}</p>
+              <p className="text-2xl text-white font-semibold font-poppins mt-1">{instructorName}</p>
             </div>
             <p className="text-gray-300 leading-relaxed">
               {instructor?.additionalDetails?.about || "No additional information available about the instructor."}

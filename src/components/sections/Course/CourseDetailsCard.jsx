@@ -59,8 +59,8 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
   const isEnrolled = user && course?.studentsEnrolled?.includes(user?._id);
 
   return (
-    <div className="sticky top-6">
-      <div className="relative overflow-hidden rounded-2xl bg-[#1E1E2F] shadow-lg border border-[#2A2A40]">
+    <div className="sticky top-6 w-[28rem] ">
+      <div className="relative overflow-hidden rounded-2xl bg-black shadow-lg border border-[#2A2A40]">
         {/* Thumbnail */}
         <div className="relative group">
           <img
@@ -79,11 +79,11 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Price */}
-          <div className="text-center">
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+          <div className="text-center flex flex-row gap-4 items-start justify-start">
+            <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-100">
               ₹{CurrentPrice?.toLocaleString()}
             </h2>
-            <p className="text-sm text-gray-400 mt-1">One-time payment</p>
+            <p className="text-sm text-gray-400 mt-4">One-time payment</p>
           </div>
 
           {/* Buy/Add to Cart */}
@@ -119,15 +119,23 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
               </button>
             )}
           </div>
+          {/* Money Back Guarantee */}
+          <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-xl p-4 text-center">
+            <div className="flex items-center justify-center gap-2 text-green-400 mb-1">
+              <FaGift className="animate-pulse" />
+              <span className="font-semibold">30-Day Money-Back Guarantee</span>
+            </div>
+            <p className="text-xs text-gray-400">Full refund if you're not satisfied</p>
+          </div>
 
 
           {/* What’s Included */}
-          <div className="space-y-4">
+          <div className="space-y-2">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
               <FaStar className="text-yellow-400" />
               This Course Includes:
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2">
               {course?.instructions?.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <span className="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-1 mt-1">
