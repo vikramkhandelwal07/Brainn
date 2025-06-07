@@ -19,14 +19,19 @@ import {ACCOUNT_TYPE} from "./utils/Constants";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import VerifyEmail from "./pages/VerifyEmail";
 import UpdatePassword from "./pages/UpdatePassword";
-// import Dashboard from "./pages/Dashboard";
-// import MyProfile from "./pages/dashboard/MyProfile";
-// import Settings from "./pages/dashboard/Settings";
+import Dashboard from "./pages/Dashboard";
+import PrivateProtectedRoute from "./components/sections/auth/PrivateProtectedRoute";
+import MyProfile from "./components/sections/Dashbaord/MyProfile";
+import Settings from "./components/sections/Dashbaord/Settings/Settings"
 import Loading from "./components/common/LoadingSpinner";
-
+import RateUs from "./pages/RateUs";
+import { apiConnector } from './services/apiConnector';
+import { setUser } from './slices/userProfileSlice'; 
+import { setToken } from './slices/authSlice';
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { token } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.userProfile);
   const [loading, setLoading] = useState(true);
 
@@ -36,6 +41,20 @@ function App() {
     }, 2000); 
   }, []);
 
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+
+    if (savedToken && !token) {
+      dispatch(setToken(JSON.parse(savedToken)));
+    }
+
+    if (savedUser && !user) {
+      dispatch(setUser(JSON.parse(savedUser)));
+    }
+  }, []);
+  
+  
   if (loading) {
     return (
       <div>
@@ -93,19 +112,18 @@ function App() {
         />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        {/* <Route path="/project" element={<Project />} />
-        <Route path="/rateus" element={<Rateus />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} /> */}
+        <Route path="/rateus" element={<RateUs />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/termsandconditions" element={<TermsAndConditions />} />
-        {/* <Route
+        <Route
           element={
-            <PrivateRoute>
+            <PrivateProtectedRoute>
               <Dashboard />
-            </PrivateRoute>
+            </PrivateProtectedRoute>
           }
-        > */}
-          {/* <Route path="dashboard/my-profile" element={<MyProfile />} />
-          <Route path="dashboard/settings" element={<Settings />} /> */}
+        >
+          <Route path="dashboard/my-profile" element={<MyProfile />} />
+          <Route path="dashboard/settings" element={<Settings />} />
           {/* {user?.accountType === ACCOUNT_TYPE.STUDENT && (
             <>
               <Route path="dashboard/cart" element={<Cart />} />
@@ -114,8 +132,8 @@ function App() {
                 element={<EnrolledCourses />}
               />
             </>
-          )}
-          {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
+          )} */}
+          {/* {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
             <>
               <Route path="dashboard/instructor" element={<Instructor />} />
               <Route path="dashboard/add-course" element={<AddCourse />} />
@@ -125,13 +143,13 @@ function App() {
                 element={<EditCourse />}
               />
             </>
-          )}
-        </Route> */}
+          )} */}
+        </Route>
         {/* <Route
           element={
-            <PrivateRoute>
+            <PrivateProtectedRoute>
               <ViewCourse />
-            </PrivateRoute>
+            </PrivateProtectedRoute>
           }
         >
           {user?.accountType === ACCOUNT_TYPE.STUDENT && (

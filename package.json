@@ -24,6 +24,7 @@
     "copy-to-clipboard": "^3.3.3",
     "dotenv": "^16.5.0",
     "framer-motion": "^12.15.0",
+    "lucide-react": "^0.513.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.57.0",
@@ -35,6 +36,7 @@
     "react-router-dom": "^7.6.1",
     "react-spinners": "^0.17.0",
     "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
     "redux-toolkit": "^1.1.2",
     "simplex-noise": "^4.0.3",
     "swiper": "^11.2.8"

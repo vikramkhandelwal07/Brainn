@@ -4,7 +4,6 @@ import { resetCart } from "../slices/cartSlice";
 import { setUser } from "../slices/userProfileSlice";
 import { apiConnector } from "./apiConnector";
 import { endpoints } from "./api";
-import { useNavigate } from "react-router-dom";
 const {
   SENDOTP_API,
   SIGNUP_API,
