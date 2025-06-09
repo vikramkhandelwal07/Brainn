@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import IconButton from "./IconButton";
 
-export default function Confirmation({
+export default function ConfirmationModal({
   modalData,
   isOpen = true,
   onClose,

@@ -23,8 +23,8 @@ export default function IconButton({
   // Color variants
   const colorVariants = {
     primary: outline
-      ? "border-2 border-yellow-400 bg-transparent text-yellow-400 hover:bg-yellow-400 hover:text-gray-900 focus:ring-yellow-400/50"
-      : "bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 hover:from-yellow-500 hover:to-yellow-600 focus:ring-yellow-400/50 shadow-lg hover:shadow-yellow-500/25",
+      ? "border-2 border-teal-400 bg-transparent text-teal-400 hover:bg-teal-400 hover:text-gray-900 focus:ring-teal-400/50"
+      : "bg-gradient-to-r from-teal-400 to-teal-500 text-gray-900 hover:from-teal-500 hover:to-teal-600 focus:ring-teal-400/50 shadow-lg hover:shadow-teal-500/25",
 
     secondary: outline
       ? "border-2 border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:ring-gray-300/50"

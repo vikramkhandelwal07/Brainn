@@ -29,7 +29,12 @@ import { apiConnector } from './services/apiConnector';
 import { setUser } from './slices/userProfileSlice';
 import { setToken } from './slices/authSlice';
 import { getUserProfile } from './services/settingsApi';
-
+import Cart from "./components/sections/Dashbaord/cart/Cart"
+import MyEnrolledCourses from "./components/sections/Dashbaord/MyEnrolledCourses";
+import Instructor from "./components/sections/Dashbaord/InstructorDashboard/Instructor"
+import AddCourse from "./components/sections/Dashbaord/AddCourse/AddCourse"
+import MyCourses from "./components/sections/Dashbaord/MyCourses";
+import EditCourse from "./components/sections/Dashbaord/EditCourse";
 
 function App() {
   const dispatch = useDispatch();
@@ -143,16 +148,16 @@ function App() {
         >
           <Route path="dashboard/my-profile" element={<MyProfile />} />
           <Route path="dashboard/settings" element={<Settings />} />
-          {/* {user?.accountType === ACCOUNT_TYPE.STUDENT && (
+          {user?.accountType === ACCOUNT_TYPE.STUDENT && (
             <>
               <Route path="dashboard/cart" element={<Cart />} />
               <Route
                 path="dashboard/enrolled-courses"
-                element={<EnrolledCourses />}
+                element={<MyEnrolledCourses />}
               />
             </>
-          )} */}
-          {/* {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
+          )}
+          {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
             <>
               <Route path="dashboard/instructor" element={<Instructor />} />
               <Route path="dashboard/add-course" element={<AddCourse />} />
@@ -162,7 +167,7 @@ function App() {
                 element={<EditCourse />}
               />
             </>
-          )} */}
+          )}
         </Route>
         {/* <Route
           element={
