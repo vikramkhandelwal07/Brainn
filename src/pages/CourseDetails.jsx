@@ -8,7 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 
-import Confirmation from "../components/common/Confirmation"
+import ConfirmationModal from "../components/common/Confirmation"
 import Footer from "../components/common/Footer"
 import RatingStars from "../components/common/RatingStars"
 import CourseAccordionBar from "../components/sections/Course/CourseAccordionBar"
@@ -454,7 +454,7 @@ function CourseDetails() {
       <Footer />
 
       {confirmationModal && (
-        <Confirmation
+        <ConfirmationModal
           modalData={confirmationModal}
         />
       )}

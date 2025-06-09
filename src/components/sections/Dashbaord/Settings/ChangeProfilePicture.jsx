@@ -59,14 +59,14 @@ export default function ChangeProfilePicture() {
   }, [imageFile])
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-gray-600/50 bg-gradient-to-tl from-gray-900 via-gray-700 to-gray-800 p-8 shadow-xl backdrop-blur-sm">
+    <div className="relative overflow-hidden rounded-xl border border-gray-600/50 bg-gradient-to-br from-black via-gray-700 to-gray-600 p-8 shadow-xl backdrop-blur-sm">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5"></div>
 
       <div className="relative z-10">
         {/* Header */}
         <div className="mb-6 text-center">
-          <h3 className="text-xl font-semibold text-white mb-2">Profile Picture</h3>
+          <h3 className="text-3xl font-poppins font-semibold text-white mb-2">Profile Picture</h3>
           <p className="text-gray-400 text-sm">Upload a new photo to personalize your account</p>
         </div>
 

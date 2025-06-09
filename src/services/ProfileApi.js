@@ -1,8 +1,8 @@
 import { toast } from "react-hot-toast";
 
 import { setLoading, setUser } from "../slices/userProfileSlice";
-import { apiConnector } from "../apiConnector";
-import { profileEndpoints } from "../api";
+import { apiConnector } from "./apiConnector";
+import { profileEndpoints } from "./api";
 import { logout } from "./authApi";
 
 const {
@@ -41,6 +41,7 @@ export function getUserDetails(token, navigate) {
 export async function getUserEnrolledCourses(token) {
   const toastId = toast.loading("Loading...");
   let result = [];
+
   try {
     console.log("BEFORE Calling BACKEND API FOR ENROLLED COURSES");
     const response = await apiConnector(
@@ -52,20 +53,38 @@ export async function getUserEnrolledCourses(token) {
       }
     );
     console.log("AFTER Calling BACKEND API FOR ENROLLED COURSES");
-    
 
-    if (!response.data.success) {
-      throw new Error(response.data.message);
+    // Add more detailed logging
+    console.log("Response status:", response?.status);
+    console.log("Response data:", response?.data);
+
+    if (!response?.data?.success) {
+      throw new Error(
+        response?.data?.message || "Failed to fetch enrolled courses"
+      );
     }
+
     result = response.data.data;
+    console.log("Enrolled courses result:", result);
   } catch (error) {
-    console.log("GET_USER_ENROLLED_COURSES_API API ERROR............", error);
+    console.log("GET_USER_ENROLLED_COURSES_API API ERROR", error);
+    console.error("Full error object:", error);
+
+    // Log more specific error details
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      console.error("Error status:", error.response.status);
+    }
+
     toast.error("Could Not Get Enrolled Courses");
+    toast.dismiss(toastId);
+
+    throw error;
   }
+
   toast.dismiss(toastId);
   return result;
 }
-
 export async function getInstructorData(token) {
   const toastId = toast.loading("Loading...");
   let result = [];

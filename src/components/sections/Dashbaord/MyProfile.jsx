@@ -11,172 +11,208 @@ export default function MyProfile() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-tl from-gray-700 via-gray-700 to-gray-600 p-6 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-violet-500/5 to-cyan-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="mx-auto max-w-4xl relative z-10">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            My Profile
-          </h1>
-          <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
+        <div className="mb-12">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-2 h-28 bg-gradient-to-b from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-lg shadow-purple-500/25"></div>
+            <div>
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent mb-2 py-4">
+                My Profile
+              </h1>
+              <p className="text-slate-400 text-lg">Manage your personal information and preferences</p>
+            </div>
+          </div>
         </div>
 
         {/* Profile Card */}
-        <div className="mb-8 overflow-hidden rounded-2xl border border-slate-700/50 bg-gradient-to-r from-slate-800/80 to-slate-800/60 backdrop-blur-sm shadow-2xl">
-          <div className="p-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <div className="relative">
-                  <img
-                    src={user?.image}
-                    alt={`profile-${user?.firstName}`}
-                    className="h-20 w-20 rounded-2xl object-cover ring-4 ring-slate-600/50 shadow-lg"
-                  />
-                  <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-green-500 border-2 border-slate-800"></div>
+        <div className="mb-10 group">
+          <div className="overflow-hidden rounded-3xl border border-slate-700/30 bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 hover:border-slate-600/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="p-10 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-8">
+                  <div className="relative group/avatar">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-75 group-hover/avatar:opacity-100 transition-opacity duration-300"></div>
+                    <img
+                      src={user?.image}
+                      alt={`profile-${user?.firstName}`}
+                      className="relative h-24 w-24 rounded-3xl object-cover ring-2 ring-white/20 shadow-2xl transform group-hover/avatar:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 border-4 border-slate-800 shadow-lg animate-pulse"></div>
+                  </div>
+                  <div className="space-y-3">
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                      {user?.firstName + " " + user?.lastName}
+                    </h2>
+                    <p className="text-slate-300 font-medium text-lg flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                      {user?.email}
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-white">
-                    {user?.firstName + " " + user?.lastName}
-                  </h2>
-                  <p className="text-slate-300 font-medium">{user?.email}</p>
+                <div className="transform hover:scale-105 transition-transform duration-200">
+                  <IconButton
+                    text="Edit"
+                    variant="secondary"
+                    onclick={() => {
+                      navigate("/dashboard/settings")
+                    }}
+                  >
+                    <RiEditBoxLine />
+                  </IconButton>
                 </div>
               </div>
-              <IconButton
-                text="Edit"
-                variant="secondary"
-                onclick={() => {
-                  navigate("/dashboard/settings")
-                }}
-              >
-                <RiEditBoxLine />
-              </IconButton>
             </div>
           </div>
         </div>
 
         {/* About Section */}
-        <div className="mb-8 overflow-hidden rounded-2xl border border-slate-700/50 bg-gradient-to-r from-slate-800/80 to-slate-800/60 backdrop-blur-sm shadow-xl">
-          <div className="p-8">
-            <div className="flex w-full items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
-                <h3 className="text-xl font-bold text-white">About</h3>
+        <div className="mb-10 group">
+          <div className="overflow-hidden rounded-3xl border border-slate-700/30 bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl shadow-xl hover:shadow-blue-500/10 transition-all duration-500 hover:border-slate-600/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/3 to-cyan-500/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="p-10 relative">
+              <div className="flex w-full items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-1.5 h-10 bg-gradient-to-b from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-lg shadow-purple-500/25"></div>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">About</h3>
+                </div>
+                <div className="transform hover:scale-105 transition-transform duration-200">
+                  <IconButton
+                    text="Edit"
+                    variant="secondary"
+                    onclick={() => {
+                      navigate("/dashboard/settings")
+                    }}
+                  >
+                    <RiEditBoxLine />
+                  </IconButton>
+                </div>
               </div>
-              <IconButton
-                text="Edit"
-                variant="secondary"
-                onclick={() => {
-                  navigate("/dashboard/settings")
-                }}
-              >
-                <RiEditBoxLine />
-              </IconButton>
-            </div>
-            <div className="rounded-xl bg-slate-900/50 p-6 border border-slate-700/30">
-              <p
-                className={`${user?.additionalInfo?.about
-                  ? "text-slate-200"
-                  : "text-slate-400 italic"
-                  } text-base leading-relaxed`}
-              >
-                {user?.additionalInfo?.about ?? "Write Something About Yourself"}
-              </p>
+              <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-8 border border-slate-700/20 hover:border-slate-600/30 transition-colors duration-300 shadow-inner">
+                <p
+                  className={`${user?.additionalInfo?.about
+                    ? "text-slate-200"
+                    : "text-slate-400 italic"
+                    } text-lg leading-relaxed`}
+                >
+                  {user?.additionalInfo?.about ?? "Write Something About Yourself"}
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Personal Details Section */}
-        <div className="mb-8 overflow-hidden rounded-2xl border border-slate-700/50 bg-gradient-to-r from-slate-800/80 to-slate-800/60 backdrop-blur-sm shadow-xl">
-          <div className="p-8">
-            <div className="flex w-full items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
-                <h3 className="text-xl font-bold text-white">Personal Details</h3>
-              </div>
-              <IconButton
-                variant="secondary"
-                text="Edit"
-                onclick={() => {
-                  navigate("/dashboard/settings")
-                }}
-              >
-                <RiEditBoxLine />
-              </IconButton>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
-              {/* Left Column */}
-              <div className="space-y-6">
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                    First Name
-                  </label>
-                  <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                    <p className="text-base font-medium text-white">
-                      {user?.firstName}
-                    </p>
-                  </div>
+        <div className="mb-10 group">
+          <div className="overflow-hidden rounded-3xl border border-slate-700/30 bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl shadow-xl hover:shadow-purple-500/10 transition-all duration-500 hover:border-slate-600/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/3 to-pink-500/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="p-10 relative">
+              <div className="flex w-full items-center justify-between mb-10">
+                <div className="flex items-center gap-4">
+                  <div className="w-1.5 h-10 bg-gradient-to-b from-purple-400 via-pink-500 to-rose-500 rounded-full shadow-lg shadow-purple-500/25"></div>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">Personal Details</h3>
                 </div>
-
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                    Email
-                  </label>
-                  <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                    <p className="text-base font-medium text-white break-all">
-                      {user?.email}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                    Gender
-                  </label>
-                  <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                    <p className={`text-base font-medium ${user?.additionalInfo?.gender ? "text-white" : "text-slate-400 italic"
-                      }`}>
-                      {user?.additionalInfo?.gender ?? "Add Gender"}
-                    </p>
-                  </div>
+                <div className="transform hover:scale-105 transition-transform duration-200">
+                  <IconButton
+                    variant="secondary"
+                    text="Edit"
+                    onclick={() => {
+                      navigate("/dashboard/settings")
+                    }}
+                  >
+                    <RiEditBoxLine />
+                  </IconButton>
                 </div>
               </div>
 
-              {/* Right Column */}
-              <div className="space-y-6">
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                    Last Name
-                  </label>
-                  <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                    <p className="text-base font-medium text-white">
-                      {user?.lastName}
-                    </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl">
+                {/* Left Column */}
+                <div className="space-y-8">
+                  <div className="group/field">
+                    <label className="block text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <div className="w-1 h-4 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full"></div>
+                      First Name
+                    </label>
+                    <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/field:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-blue-500/5">
+                      <p className="text-lg font-semibold text-white">
+                        {user?.firstName}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="group/field">
+                    <label className="block text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <div className="w-1 h-4 bg-gradient-to-b from-green-400 to-green-600 rounded-full"></div>
+                      Email
+                    </label>
+                    <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/field:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-green-500/5">
+                      <p className="text-lg font-semibold text-white break-all">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="group/field">
+                    <label className="block text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <div className="w-1 h-4 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></div>
+                      Gender
+                    </label>
+                    <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/field:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-purple-500/5">
+                      <p className={`text-lg font-semibold ${user?.additionalInfo?.gender ? "text-white" : "text-slate-400 italic"
+                        }`}>
+                        {user?.additionalInfo?.gender ?? "Add Gender"}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                    Phone Number
-                  </label>
-                  <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                    <p className={`text-base font-medium ${user?.additionalInfo?.contactNumber ? "text-white" : "text-slate-400 italic"
-                      }`}>
-                      {user?.additionalInfo?.contactNumber ?? "Add Contact Number"}
-                    </p>
+                {/* Right Column */}
+                <div className="space-y-8">
+                  <div className="group/field">
+                    <label className="block text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <div className="w-1 h-4 bg-gradient-to-b from-cyan-400 to-cyan-600 rounded-full"></div>
+                      Last Name
+                    </label>
+                    <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/field:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-cyan-500/5">
+                      <p className="text-lg font-semibold text-white">
+                        {user?.lastName}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="group">
-                  <label className="block text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                    Date Of Birth
-                  </label>
-                  <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                    <p className={`text-base font-medium ${user?.additionalInfo?.dateOfBirth ? "text-white" : "text-slate-400 italic"
-                      }`}>
-                      {formattedDate(user?.additionalInfo?.dateOfBirth) ??
-                        "Add Date Of Birth"}
-                    </p>
+                  <div className="group/field">
+                    <label className="block text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <div className="w-1 h-4 bg-gradient-to-b from-orange-400 to-orange-600 rounded-full"></div>
+                      Phone Number
+                    </label>
+                    <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/field:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-orange-500/5">
+                      <p className={`text-lg font-semibold ${user?.additionalInfo?.contactNumber ? "text-white" : "text-slate-400 italic"
+                        }`}>
+                        {user?.additionalInfo?.contactNumber ?? "Add Contact Number"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="group/field">
+                    <label className="block text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider flex items-center gap-2">
+                      <div className="w-1 h-4 bg-gradient-to-b from-pink-400 to-pink-600 rounded-full"></div>
+                      Date Of Birth
+                    </label>
+                    <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/field:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-pink-500/5">
+                      <p className={`text-lg font-semibold ${user?.additionalInfo?.dateOfBirth ? "text-white" : "text-slate-400 italic"
+                        }`}>
+                        {formattedDate(user?.additionalInfo?.dateOfBirth) ??
+                          "Add Date Of Birth"}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -185,94 +221,105 @@ export default function MyProfile() {
         </div>
 
         {/* Social Links Section */}
-        <div className="overflow-hidden rounded-2xl border border-slate-700/50 bg-gradient-to-r from-slate-800/80 to-slate-800/60 backdrop-blur-sm shadow-xl">
-          <div className="p-8">
-            <div className="flex w-full items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
-                <h3 className="text-xl font-bold text-white">Social Links</h3>
-              </div>
-              <IconButton
-                variant="secondary"
-                text="Edit"
-                onclick={() => {
-                  navigate("/dashboard/settings")
-                }}
-              >
-                <RiEditBoxLine />
-              </IconButton>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
-              {/* GitHub */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                  <Github className="w-4 h-4 text-gray-400" />
-                  GitHub Profile
-                </label>
-                <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                  {user?.additionalInfo?.socialLinks?.github ? (
-                    <a
-                      href={user.additionalInfo.socialLinks.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-base font-medium text-white hover:text-gray-300 transition-colors break-all"
-                    >
-                      {user.additionalInfo.socialLinks.github}
-                    </a>
-                  ) : (
-                    <p className="text-base font-medium text-slate-400 italic">
-                      Add GitHub Profile
-                    </p>
-                  )}
+        <div className="group">
+          <div className="overflow-hidden rounded-3xl border border-slate-700/30 bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl shadow-xl hover:shadow-cyan-500/10 transition-all duration-500 hover:border-slate-600/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/3 to-blue-500/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="p-10 relative">
+              <div className="flex w-full items-center justify-between mb-10">
+                <div className="flex items-center gap-4">
+                  <div className="w-1.5 h-10 bg-gradient-to-b from-cyan-400 via-blue-500 to-indigo-500 rounded-full shadow-lg shadow-cyan-500/25"></div>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">Social Links</h3>
+                </div>
+                <div className="transform hover:scale-105 transition-transform duration-200">
+                  <IconButton
+                    variant="secondary"
+                    text="Edit"
+                    onclick={() => {
+                      navigate("/dashboard/settings")
+                    }}
+                  >
+                    <RiEditBoxLine />
+                  </IconButton>
                 </div>
               </div>
 
-              {/* LinkedIn */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                  <Linkedin className="w-4 h-4 text-blue-500" />
-                  LinkedIn Profile
-                </label>
-                <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                  {user?.additionalInfo?.socialLinks?.linkedin ? (
-                    <a
-                      href={user.additionalInfo.socialLinks.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-base font-medium text-white hover:text-blue-300 transition-colors break-all"
-                    >
-                      {user.additionalInfo.socialLinks.linkedin}
-                    </a>
-                  ) : (
-                    <p className="text-base font-medium text-slate-400 italic">
-                      Add LinkedIn Profile
-                    </p>
-                  )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl">
+                {/* GitHub */}
+                <div className="group/social">
+                  <label className="flex items-center gap-3 text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider">
+                    <div className="p-2 rounded-xl bg-gradient-to-br from-gray-600 to-gray-800 shadow-lg">
+                      <Github className="w-4 h-4 text-white" />
+                    </div>
+                    GitHub Profile
+                  </label>
+                  <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/social:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-gray-500/5">
+                    {user?.additionalInfo?.socialLinks?.github ? (
+                      <a
+                        href={user.additionalInfo.socialLinks.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg font-semibold text-white hover:text-gray-300 transition-colors break-all hover:underline"
+                      >
+                        {user.additionalInfo.socialLinks.github}
+                      </a>
+                    ) : (
+                      <p className="text-lg font-semibold text-slate-400 italic">
+                        Add GitHub Profile
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Twitter */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">
-                  <Twitter className="w-4 h-4 text-sky-400" />
-                  Twitter Profile
-                </label>
-                <div className="rounded-xl bg-slate-900/50 p-4 border border-slate-700/30 group-hover:border-slate-600/50 transition-colors">
-                  {user?.additionalInfo?.socialLinks?.twitter ? (
-                    <a
-                      href={user.additionalInfo.socialLinks.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-base font-medium text-white hover:text-sky-300 transition-colors break-all"
-                    >
-                      {user.additionalInfo.socialLinks.twitter}
-                    </a>
-                  ) : (
-                    <p className="text-base font-medium text-slate-400 italic">
-                      Add Twitter Profile
-                    </p>
-                  )}
+                {/* LinkedIn */}
+                <div className="group/social">
+                  <label className="flex items-center gap-3 text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider">
+                    <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg">
+                      <Linkedin className="w-4 h-4 text-white" />
+                    </div>
+                    LinkedIn Profile
+                  </label>
+                  <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/social:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-blue-500/5">
+                    {user?.additionalInfo?.socialLinks?.linkedin ? (
+                      <a
+                        href={user.additionalInfo.socialLinks.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg font-semibold text-white hover:text-blue-300 transition-colors break-all hover:underline"
+                      >
+                        {user.additionalInfo.socialLinks.linkedin}
+                      </a>
+                    ) : (
+                      <p className="text-lg font-semibold text-slate-400 italic">
+                        Add LinkedIn Profile
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Twitter */}
+                <div className="group/social md:col-span-2">
+                  <label className="flex items-center gap-3 text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider">
+                    <div className="p-2 rounded-xl bg-gradient-to-br from-sky-400 to-sky-600 shadow-lg">
+                      <Twitter className="w-4 h-4 text-white" />
+                    </div>
+                    Twitter Profile
+                  </label>
+                  <div className="rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-6 border border-slate-700/20 group-hover/social:border-slate-600/40 transition-all duration-300 shadow-inner hover:shadow-sky-500/5">
+                    {user?.additionalInfo?.socialLinks?.twitter ? (
+                      <a
+                        href={user.additionalInfo.socialLinks.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg font-semibold text-white hover:text-sky-300 transition-colors break-all hover:underline"
+                      >
+                        {user.additionalInfo.socialLinks.twitter}
+                      </a>
+                    ) : (
+                      <p className="text-lg font-semibold text-slate-400 italic">
+                        Add Twitter Profile
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
