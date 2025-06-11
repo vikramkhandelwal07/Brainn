@@ -199,7 +199,7 @@ exports.getCourseDetails = async (req, res) => {
     const { courseId } = req.body;
 
     const course = await Course.findById(courseId)
-      .populate("instructor", "firstName lastName email")
+      .populate("instructor", "firstName lastName email about")
       .populate("category", "name")
       .populate({
         path: "courseContent",
