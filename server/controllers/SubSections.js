@@ -33,9 +33,9 @@ exports.createSubSection = async (req, res) => {
 
     const updatedSection = await Section.findByIdAndUpdate(
       { _id: sectionId },
-      { $push: { subSections: subSectionDetails._id } }, // Fixed: should be subSections (plural)
+      { $push: { subSections: subSectionDetails._id } }, 
       { new: true }
-    ).populate("subSections"); // Fixed: should be subSections (plural)
+    ).populate("subSections"); 
 
     if (!updatedSection) {
       return res.status(404).json({
@@ -125,11 +125,10 @@ exports.deleteSubSection = async (req, res) => {
       });
     }
 
-    // remove subsection reference from section
     const updatedSection = await Section.findByIdAndUpdate(
       sectionId,
       {
-        $pull: { subSections: subSectionId }, // Fixed: should be subSections (plural)
+        $pull: { subSections: subSectionId }, 
       },
       { new: true }
     ).populate("subSections");

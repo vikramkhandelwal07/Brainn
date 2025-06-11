@@ -8,7 +8,7 @@ const sectionSchema = new mongoose.Schema({
     maxlength: 200,
   },
 
-  subSection: [
+  subSections: [
     {
       type: mongoose.Schema.Types.ObjectId,
       // required:true,

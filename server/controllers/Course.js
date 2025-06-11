@@ -225,32 +225,27 @@ exports.getCourseDetails = async (req, res) => {
 
 exports.editCourse = async (req, res) => {
   try {
+    console.log("🟡 [editCourse] Body received:", req.body);
+    console.log("🟡 [editCourse] Files received:", req.files);
+
     const { courseId } = req.body;
-    console.log(courseId);
-    const updates = req.body;
+    if (!courseId) {
+      console.error("❌ No courseId received");
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing courseId" });
+    }
 
     const course = await Course.findById(courseId);
-
     if (!course) {
+      console.error("❌ Course not found for ID:", courseId);
       return res
         .status(404)
         .json({ success: false, message: "Course not found" });
     }
 
-    // If Thumbnail Image is found, update it
-    if (req.files && req.files.thumbnailImage) {
-      console.log("thumbnail update");
-      const thumbnail = req.files.thumbnailImage;
+    const updates = req.body;
 
-      const thumbnailImage = await imageUploadCloudinary(
-        thumbnail,
-        process.env.FOLDER_NAME
-      );
-
-      course.thumbnail = thumbnailImage.secure_url;
-    }
-
-    // List of allowed fields to update (from your schema)
     const allowedFields = [
       "courseName",
       "courseDescription",
@@ -260,13 +255,15 @@ exports.editCourse = async (req, res) => {
       "whatWillYouLearn",
       "published",
       "category",
+      "status",
     ];
 
-    // Update only allowed fields
     for (const key of allowedFields) {
-      if (updates.hasOwnProperty(key)) {
+      if (
+        Object.prototype.hasOwnProperty.call(updates, key) ||
+        key in updates
+      ) {
         if (key === "tags" || key === "instructions") {
-          // Parse if needed (if sent as JSON string)
           try {
             course[key] =
               typeof updates[key] === "string"
@@ -275,19 +272,43 @@ exports.editCourse = async (req, res) => {
           } catch {
             course[key] = updates[key];
           }
+        } else if (key === "status") {
+          course.status = updates[key];
+          course.published = updates[key] === "Published";
         } else {
           course[key] = updates[key];
         }
       }
     }
 
-    await course.save();
+    if (req.files?.thumbnailImage) {
+      console.log("🖼️ Updating thumbnail...");
+      const thumbnail = req.files.thumbnailImage;
+      const thumbnailImage = await imageUploadCloudinary(
+        thumbnail,
+        process.env.FOLDER_NAME
+      );
+      course.thumbnail = thumbnailImage.secure_url;
+    }
+
+    console.log("🟢 Final course object before saving:", course);
+
+    try {
+      await course.save();
+    } catch (err) {
+      console.error("❌ Error during course.save():", err);
+      return res.status(500).json({
+        success: false,
+        message: "Error saving course",
+        error: err.message,
+      });
+    }
 
     const updatedCourse = await Course.findById(courseId)
       .populate({
         path: "instructor",
         populate: {
-          path: "additionalInfo", // make sure this is correct as per your User schema
+          path: "additionalInfo",
         },
       })
       .populate("category")
@@ -295,10 +316,9 @@ exports.editCourse = async (req, res) => {
       .populate({
         path: "courseContent",
         populate: {
-          path: "subSection",
+          path: "subSections",
         },
-      })
-      .exec();
+      });
 
     return res.status(200).json({
       success: true,
@@ -306,7 +326,7 @@ exports.editCourse = async (req, res) => {
       data: updatedCourse,
     });
   } catch (error) {
-    console.error("Error updating course:", error);
+    console.error("❌ Error updating course:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

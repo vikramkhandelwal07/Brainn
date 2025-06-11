@@ -150,7 +150,6 @@ export default function CourseForm() {
       })
     })
 
-    // Check if any section has no subsections
     const sectionsWithoutLectures = course.courseContent.filter(
       (section) => !section.subSections || section.subSections.length === 0
     )

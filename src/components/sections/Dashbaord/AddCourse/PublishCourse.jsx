@@ -2,14 +2,17 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-
+import { toast } from "react-hot-toast";
 import { editCourseDetails } from "../../../../services/courseApi"
 import { resetCourseState, setStep } from "../../../../slices/courseSlice"
 import { COURSE_STATUS } from "../../../../utils/Constants"
-import IconButton from "../../../common/IconButton"
 
 export default function PublishCourse() {
-  const { register, handleSubmit, setValue, getValues } = useForm()
+  const { register, handleSubmit, setValue, getValues, watch } = useForm({
+    defaultValues: {
+      public: false
+    }
+  })
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -17,11 +20,17 @@ export default function PublishCourse() {
   const { course } = useSelector((state) => state.course)
   const [loading, setLoading] = useState(false)
 
+  // Watch the public field to trigger re-renders when it changes
+  const isPublic = watch("public")
+
   useEffect(() => {
+    console.log("🔍 Course data loaded:", course)
     if (course?.status === COURSE_STATUS.PUBLISHED) {
       setValue("public", true)
+    } else {
+      setValue("public", false)
     }
-  }, [])
+  }, [course?.status, setValue, course])
 
   const goBack = () => {
     dispatch(setStep(2))
@@ -33,32 +42,77 @@ export default function PublishCourse() {
   }
 
   const handleCoursePublish = async () => {
+    console.log("🚀 handleCoursePublish called")
+    console.log("📊 Current form values:", getValues())
+    console.log("📚 Current course status:", course?.status)
+    console.log("🔄 Public checkbox value:", getValues("public"))
+    console.log("🆔 Course ID:", course?._id)
+
+    // Add validation for required data
+    if (!course?._id) {
+      console.error("❌ Course ID is missing")
+      toast.error("Error: Course ID is missing. Please try refreshing the page.")
+      return
+    }
+
+    if (!token) {
+      console.error("❌ Authentication token is missing")
+      toast.error("Error: Please log in again.")
+      return
+    }
+
     // check if form has been updated or not
     if (
       (course?.status === COURSE_STATUS.PUBLISHED &&
         getValues("public") === true) ||
       (course?.status === COURSE_STATUS.DRAFT && getValues("public") === false)
     ) {
+      console.log("ℹ️ No changes detected, navigating to courses")
       goToCourses()
       return
     }
-    const formData = new FormData()
-    formData.append("courseId", course._id)
-    const courseStatus = getValues("public")
-      ? COURSE_STATUS.PUBLISHED
-      : COURSE_STATUS.DRAFT
-    formData.append("status", courseStatus)
-    setLoading(true)
-    const result = await editCourseDetails(formData, token)
-    if (result) {
-      goToCourses()
+
+    console.log("🔄 Changes detected, updating course...")
+
+    // FIX: Send as JSON object instead of FormData
+    const courseStatus = getValues("public") ? COURSE_STATUS.PUBLISHED : COURSE_STATUS.DRAFT
+    const updateData = {
+      courseId: course._id,
+      status: courseStatus
     }
-    setLoading(false)
+
+    console.log("📤 Sending request with status:", courseStatus)
+    console.log("📤 Update data:", updateData)
+
+    setLoading(true)
+    try {
+      const result = await editCourseDetails(updateData, token)
+      console.log("✅ Course update result:", result)
+
+      if (result) {
+        console.log("✅ Success! Navigating to courses...")
+        goToCourses()
+      } else {
+        console.error("❌ No result returned from editCourseDetails")
+        toast.error("Failed to update course. Please try again.")
+      }
+    } catch (error) {
+      console.error("💥 Error updating course:", error)
+      toast.error("An error occurred while updating the course.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const onSubmit = (data) => {
-    console.log(data)
+    console.log("📝 Form submitted with data:", data)
     handleCoursePublish()
+  }
+
+  // Add debug logging for toggle changes
+  const handleToggleChange = (e) => {
+    console.log("🔄 Toggle changed to:", e.target.checked)
+    setValue("public", e.target.checked)
   }
 
   return (
@@ -68,6 +122,17 @@ export default function PublishCourse() {
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-full blur-2xl"></div>
 
       <div className="relative p-8">
+        {/* Debug Panel - Remove in production */}
+        <div className="mb-4 rounded-lg bg-yellow-900/20 border border-yellow-600/30 p-4">
+          <h3 className="text-yellow-400 font-semibold mb-2">🐛 Debug Info</h3>
+          <div className="text-xs text-yellow-300 space-y-1">
+            <div>Course Status: {course?.status || 'Not set'}</div>
+            <div>Toggle Value: {isPublic ? '✅ TRUE' : '❌ FALSE'}</div>
+            <div>Loading: {loading ? '🔄 TRUE' : '⏹️ FALSE'}</div>
+            <div>Course ID: {course?._id || 'Not found'}</div>
+          </div>
+        </div>
+
         {/* Header section */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-2">
@@ -88,13 +153,18 @@ export default function PublishCourse() {
                   type="checkbox"
                   id="public"
                   {...register("public")}
+                  onChange={handleToggleChange}
                   className="peer sr-only"
                 />
                 <label
                   htmlFor="public"
-                  className="relative flex h-6 w-11 cursor-pointer items-center rounded-full bg-slate-600 px-0.5 transition-colors peer-checked:bg-gradient-to-r peer-checked:from-green-500 peer-checked:to-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-green-500"
+                  className={`relative flex h-6 w-11 cursor-pointer items-center rounded-full px-0.5 transition-all duration-300 ${isPublic
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-lg shadow-green-500/25'
+                    : 'bg-slate-600 hover:bg-slate-500'
+                    } peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-green-500`}
                 >
-                  <span className="h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5"></span>
+                  <span className={`h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${isPublic ? 'translate-x-5' : 'translate-x-0'
+                    }`}></span>
                 </label>
               </div>
 
@@ -112,12 +182,12 @@ export default function PublishCourse() {
 
               {/* Status indicator */}
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${course?.status === COURSE_STATUS.PUBLISHED
-                    ? 'bg-green-500 animate-pulse'
-                    : 'bg-yellow-500'
+                <div className={`w-2 h-2 rounded-full ${isPublic
+                  ? 'bg-green-500 animate-pulse'
+                  : 'bg-yellow-500'
                   }`}></div>
                 <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">
-                  {course?.status === COURSE_STATUS.PUBLISHED ? 'Published' : 'Draft'}
+                  {isPublic ? 'Will be Published' : 'Will be Draft'}
                 </span>
               </div>
             </div>
@@ -145,18 +215,16 @@ export default function PublishCourse() {
                 </div>
               )}
 
-              <IconButton
+              <button
+                type="submit"
                 disabled={loading}
-                text={
-                  <div className="flex items-center space-x-2">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Save Changes</span>
-                  </div>
-                }
-                customClasses="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-green-500/25 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              />
+                className="group flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-green-500/25 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Save Changes</span>
+              </button>
             </div>
           </div>
         </form>

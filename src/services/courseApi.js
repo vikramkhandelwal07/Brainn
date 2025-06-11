@@ -104,10 +104,21 @@ export const editCourseDetails = async (data, token) => {
   let result = null;
   const toastId = toast.loading("Loading...");
   try {
-    const response = await apiConnector("POST", EDIT_COURSE_API, data, {
-      "Content-Type": "multipart/form-data",
+    // FIX: Use appropriate content type based on data being sent
+    const headers = {
       Authorization: `Bearer ${token}`,
-    });
+    };
+
+    // If data contains file uploads, use multipart/form-data
+    // Otherwise, use JSON content type
+    if (data instanceof FormData) {
+      headers["Content-Type"] = "multipart/form-data";
+    } else {
+      headers["Content-Type"] = "application/json";
+    }
+
+    const response = await apiConnector("PUT", EDIT_COURSE_API, data, headers);
+
     console.log("EDIT COURSE API RESPONSE............", response);
     if (!response?.data?.success) {
       throw new Error("Could Not Update Course Details");
@@ -121,6 +132,8 @@ export const editCourseDetails = async (data, token) => {
   toast.dismiss(toastId);
   return result;
 };
+
+
 
 export const createSection = async (data, token) => {
   let result = null;
