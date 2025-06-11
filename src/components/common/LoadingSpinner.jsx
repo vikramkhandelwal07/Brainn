@@ -18,7 +18,7 @@ const styles = {
     alignItems: 'center',
     width: '100vw',
     height: '100vh',
-    backgroundColor: '#000814', // Dark background
+    backgroundColor: '#000814', 
   },
   loadingText: {
     color: '#ffffff',

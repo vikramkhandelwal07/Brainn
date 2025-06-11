@@ -35,6 +35,8 @@ import Instructor from "./components/sections/Dashbaord/InstructorDashboard/Inst
 import AddCourse from "./components/sections/Dashbaord/AddCourse/AddCourse"
 import MyCourses from "./components/sections/Dashbaord/MyCourses";
 import EditCourse from "./components/sections/Dashbaord/EditCourse";
+import ViewCourse from "./pages/ViewCourse";
+import VideoDetails from "./components/sections/ViewCourse/VideoDetails";
 
 function App() {
   const dispatch = useDispatch();
@@ -53,13 +55,11 @@ function App() {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
 
-    // Restore token if available
     if (savedToken && !token) {
       const parsedToken = JSON.parse(savedToken);
       dispatch(setToken(parsedToken));
     }
 
-    // Restore user if available
     if (savedUser && !user) {
       try {
         const parsedUser = JSON.parse(savedUser);
@@ -70,7 +70,6 @@ function App() {
       }
     }
 
-    // If we have token but no user, fetch fresh user data
     if (savedToken && !savedUser) {
       const parsedToken = JSON.parse(savedToken);
       console.log("Fetching fresh user data from API...");
@@ -169,7 +168,7 @@ function App() {
             </>
           )}
         </Route>
-        {/* <Route
+        <Route
           element={
             <PrivateProtectedRoute>
               <ViewCourse />
@@ -184,7 +183,7 @@ function App() {
               />
             </>
           )}
-        </Route> */}
+        </Route>
         <Route path="*" element={<Error />} />
       </Routes>
       {/* <BackToTop /> */}
