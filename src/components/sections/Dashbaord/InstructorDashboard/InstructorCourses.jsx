@@ -19,7 +19,7 @@ import {
 import { COURSE_STATUS } from "../../../../utils/Constants"
 import ConfirmationModal from "../../../common/Confirmation"
 
-export default function CoursesTable({ courses, setCourses }) {
+export default function InstructorCourses({ courses, setCourses }) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { token } = useSelector((state) => state.auth)
@@ -149,6 +149,7 @@ export default function CoursesTable({ courses, setCourses }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-sm font-medium text-slate-300">2hr 30min</span>
+                      {/* todo :dynamically fetch time from course */}
                     </div>
                   </Td>
                   <Td className="px-6 py-6">

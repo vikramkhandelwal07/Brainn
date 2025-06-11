@@ -160,7 +160,7 @@ exports.getCompleteCourseDetails = async (req, res) => {
       .populate({
         path: "courseContent",
         populate: {
-          path: "subSection",
+          path: "subSections",
           select: "-__v -createdAt -updatedAt",
         },
       })
@@ -204,7 +204,7 @@ exports.getCourseDetails = async (req, res) => {
       .populate({
         path: "courseContent",
         populate: {
-          path: "subSection",
+          path: "subSections",
           model: "SubSection",
         },
       })
@@ -286,7 +286,7 @@ exports.editCourse = async (req, res) => {
       const thumbnail = req.files.thumbnailImage;
       const thumbnailImage = await imageUploadCloudinary(
         thumbnail,
-        process.env.FOLDER_NAME
+        process.env.FOLDER_STORAGE_NAME
       );
       course.thumbnail = thumbnailImage.secure_url;
     }
@@ -354,37 +354,34 @@ exports.deleteCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
 
-    // Find the course
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Unenroll students from the course
-    const studentsEnrolled = course.studentsEnroled;
+    // Remove course from enrolled students
+    const studentsEnrolled = course.studentsEnrolled;
     for (const studentId of studentsEnrolled) {
       await User.findByIdAndUpdate(studentId, {
         $pull: { courses: courseId },
       });
     }
 
-    // Delete sections and sub-sections
+    // Delete sections and their subSections
     const courseSections = course.courseContent;
     for (const sectionId of courseSections) {
-      // Delete sub-sections of the section
       const section = await Section.findById(sectionId);
       if (section) {
-        const subSections = section.subSection;
+        const subSections = section.subSections; // ✅ Correct field usage
         for (const subSectionId of subSections) {
           await SubSection.findByIdAndDelete(subSectionId);
         }
       }
 
-      // Delete the section
       await Section.findByIdAndDelete(sectionId);
     }
 
-    // Delete the course
+    // Finally delete the course itself
     await Course.findByIdAndDelete(courseId);
 
     return res.status(200).json({
@@ -392,7 +389,7 @@ exports.deleteCourse = async (req, res) => {
       message: "Course deleted successfully",
     });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error deleting course:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",

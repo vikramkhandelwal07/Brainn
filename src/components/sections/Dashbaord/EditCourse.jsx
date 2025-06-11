@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 import {
   fetchCourseDetails,
-  getFullDetailsOfCourse,
+  getCompleteCourseDetails,
 } from "../../../services/courseApi";
 import { setCourse, setEditCourse } from "../../../slices/courseSlice";
 import RenderFlow from "./AddCourse/RenderFlow";
@@ -20,21 +20,47 @@ export default function EditCourse() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const result = await getFullDetailsOfCourse(courseId, token);
-      if (result?.courseDetails) {
-        dispatch(setEditCourse(true));
-        dispatch(setCourse(result?.courseDetails));
+      try {
+        
+        const result = await getCompleteCourseDetails(courseId, token);
+        console.log('API Response:', result); 
+
+        let courseData = null;
+
+        // Handle different response structures
+        if (result && result._id) {
+          // Direct course object
+          courseData = result;
+        } else if (result?.data?.success && result?.data?.data) {
+          // Nested structure with success flag
+          courseData = result.data.data;
+        } else if (result?.data && result?.data._id) {
+          // Course object nested in data
+          courseData = result.data;
+        }
+
+        if (courseData) {
+          console.log('Course data:', courseData); // Debug log
+          dispatch(setEditCourse(true));
+          dispatch(setCourse(courseData));
+        } else {
+          console.error('Invalid API response structure:', result);
+        }
+      } catch (error) {
+        console.error('Error fetching course details:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [courseId, token, dispatch]); // Added missing dependencies
+
+  // Debug log to check Redux state
+  console.log('Current course in Redux:', course);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="relative">
-          {/* Enhanced loading spinner with pulsing background */}
           <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping"></div>
           <div className="relative w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
           <div className="absolute inset-2 border-2 border-blue-400/20 border-r-blue-400 rounded-full animate-spin animation-delay-150"></div>
@@ -46,7 +72,6 @@ export default function EditCourse() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Header with enhanced styling */}
       <div className="relative overflow-hidden bg-gradient-to-r from-slate-800/50 to-slate-700/30 border-b border-slate-700/50 backdrop-blur-sm">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
         <div className="relative px-6 py-8 sm:px-8 lg:px-12">
@@ -65,9 +90,8 @@ export default function EditCourse() {
       {/* Main content area */}
       <div className="px-6 py-12 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-4xl">
-          {course ? (
+          {course && Object.keys(course).length > 0 ? (
             <div className="relative">
-              {/* Subtle background pattern */}
               <div className="absolute inset-0 bg-gradient-to-br from-slate-800/20 to-slate-700/10 rounded-2xl"></div>
               <div className="relative bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl p-8">
                 <RenderFlow />
@@ -75,7 +99,6 @@ export default function EditCourse() {
             </div>
           ) : (
             <div className="text-center py-20">
-              {/* Enhanced "not found" state */}
               <div className="relative inline-block">
                 <div className="absolute inset-0 bg-red-500/10 rounded-full blur-xl"></div>
                 <div className="relative w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">

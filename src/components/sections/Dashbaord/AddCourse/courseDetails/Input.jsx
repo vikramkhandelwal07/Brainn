@@ -21,8 +21,11 @@ export default function Input({
   const [inputValue, setInputValue] = useState("")
 
   useEffect(() => {
-    if (editCourse) {
-      setTags(course?.tag)
+    if (editCourse && course?.tags) {
+      // Fixed: Changed from course?.tag to course?.tags
+      // Also added safety check to ensure tags exists and is an array
+      const courseTags = Array.isArray(course.tags) ? course.tags : []
+      setTags(courseTags)
     }
     register(name, { required: true, validate: (value) => value.length > 0 })
 

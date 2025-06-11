@@ -44,8 +44,8 @@ const CourseSlider = ({ Courses = [], title = "Featured Courses" }) => {
             pagination={{
               clickable: true,
               dynamicBullets: true,
-              bulletClass: 'swiper-pagination-bullet custom-bullet',
-              bulletActiveClass: 'swiper-pagination-bullet-active custom-bullet-active'
+              bulletClass: 'custom-bullet',
+              bulletActiveClass: 'custom-bullet-active'
             }}
             freeMode={{
               enabled: true,

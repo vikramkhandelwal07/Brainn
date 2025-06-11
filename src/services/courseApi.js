@@ -314,7 +314,7 @@ export const deleteCourse = async (data, token) => {
   toast.dismiss(toastId);
 };
 
-export const getFullDetailsOfCourse = async (courseId, token) => {
+export const getCompleteCourseDetails = async (courseId, token) => {
   const toastId = toast.loading("Loading...");
   let result = null;
   try {
