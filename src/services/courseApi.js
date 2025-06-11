@@ -34,7 +34,7 @@ export const getAllCourses = async () => {
     }
     result = response?.data?.data;
   } catch (error) {
-    console.log("GET_ALL_COURSE_API API ERROR............", error);
+    console.log("GET_ALL_COURSE_API API ERROR", error);
     toast.error(error.message);
   }
   toast.dismiss(toastId);
@@ -48,14 +48,14 @@ export const fetchCourseDetails = async (courseId) => {
     const response = await apiConnector("POST", COURSE_DETAILS_API, {
       courseId,
     });
-    console.log("COURSE_DETAILS_API API RESPONSE............", response);
+    console.log("COURSE_DETAILS_API API RESPONSE", response);
 
     if (!response.data.success) {
       throw new Error(response.data.message);
     }
     result = response.data;
   } catch (error) {
-    console.log("COURSE_DETAILS_API API ERROR............", error);
+    console.log("COURSE_DETAILS_API API ERROR", error);
     result = error.response?.data || { success: false, message: error.message };
   }
   toast.dismiss(toastId);
@@ -66,13 +66,13 @@ export const fetchCourseCategories = async () => {
   let result = [];
   try {
     const response = await apiConnector("GET", COURSE_CATEGORIES_API);
-    console.log("COURSE_CATEGORIES_API API RESPONSE............", response);
+    console.log("COURSE_CATEGORIES_API API RESPONSE", response);
     if (!response?.data?.success) {
       throw new Error("Could Not Fetch Course Categories");
     }
     result = response?.data?.data;
   } catch (error) {
-    console.log("COURSE_CATEGORY_API API ERROR............", error);
+    console.log("COURSE_CATEGORY_API API ERROR", error);
     toast.error(error.message);
   }
   return result;
@@ -86,14 +86,14 @@ export const addCourseDetails = async (data, token) => {
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${token}`,
     });
-    console.log("CREATE COURSE API RESPONSE............", response);
+    console.log("CREATE COURSE API RESPONSE", response);
     if (!response?.data?.success) {
       throw new Error("Could Not Add Course Details");
     }
     toast.success("Course Details Added Successfully");
     result = response?.data?.data;
   } catch (error) {
-    console.log("CREATE COURSE API ERROR............", error);
+    console.log("CREATE COURSE API ERROR", error);
     toast.error(error.message);
   }
   toast.dismiss(toastId);
@@ -104,13 +104,10 @@ export const editCourseDetails = async (data, token) => {
   let result = null;
   const toastId = toast.loading("Loading...");
   try {
-    // FIX: Use appropriate content type based on data being sent
     const headers = {
       Authorization: `Bearer ${token}`,
     };
 
-    // If data contains file uploads, use multipart/form-data
-    // Otherwise, use JSON content type
     if (data instanceof FormData) {
       headers["Content-Type"] = "multipart/form-data";
     } else {
@@ -119,14 +116,14 @@ export const editCourseDetails = async (data, token) => {
 
     const response = await apiConnector("PUT", EDIT_COURSE_API, data, headers);
 
-    console.log("EDIT COURSE API RESPONSE............", response);
+    console.log("EDIT COURSE API RESPONSE", response);
     if (!response?.data?.success) {
       throw new Error("Could Not Update Course Details");
     }
     toast.success("Course Details Updated Successfully");
     result = response?.data?.data;
   } catch (error) {
-    console.log("EDIT COURSE API ERROR............", error);
+    console.log("EDIT COURSE API ERROR", error);
     toast.error(error.message);
   }
   toast.dismiss(toastId);
@@ -142,14 +139,14 @@ export const createSection = async (data, token) => {
     const response = await apiConnector("POST", CREATE_SECTION_API, data, {
       Authorization: `Bearer ${token}`,
     });
-    console.log("CREATE SECTION API RESPONSE............", response);
+    console.log("CREATE SECTION API RESPONSE", response);
     if (!response?.data?.success) {
       throw new Error("Could Not Create Section");
     }
     toast.success("Course Section Created");
     result = response?.data?.data;
   } catch (error) {
-    console.log("CREATE SECTION API ERROR............", error);
+    console.log("CREATE SECTION API ERROR", error);
     toast.error(error.message);
   }
   toast.dismiss(toastId);
@@ -164,7 +161,7 @@ export const createSubSection = async (data, token) => {
       "Content-Type": "multipart/form-data", // Added for file upload
       Authorization: `Bearer ${token}`,
     });
-    console.log("CREATE SUB-SECTION API RESPONSE............", response);
+    console.log("CREATE SUB-SECTION API RESPONSE", response);
     if (!response?.data?.success) {
       throw new Error("Could Not Add Lecture");
     }

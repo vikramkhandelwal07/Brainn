@@ -203,12 +203,29 @@ function CourseDetails() {
     )
   }
 
+  const formatDuration = (seconds) => {
+    if (seconds <= 0) return "Duration not available";
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    if (hours > 0) {
+      return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    } else {
+      return `${Math.floor(seconds)}s`;
+    }
+  };
+  
   const totalNoOfLectures = useMemo(() => {
-    const content = response?.data?.courseContent || []; // Corrected path
+    const content = response?.data?.courseContent || []; 
     return content.reduce((total, section) => {
-      return total + (section.subSection?.length || 0);
+      return total + (section.subSections?.length || 0);
     }, 0);
   }, [response?.data?.courseContent]);
+
+  
 
   const handleCollapseAll = () => {
     setIsActive([])
@@ -259,8 +276,15 @@ function CourseDetails() {
     createdAt,
   } = courseDetails
 
+  const totalDuration = courseContent.reduce((total, section) => {
+    const sectionDuration = (section.subSections || []).reduce((subTotal, sub) => {
+      return subTotal + parseFloat(sub.timeDuration || 0);
+    }, 0);
+    return total + sectionDuration;
+  }, 0);
+  
   const instructorName = `${instructor?.firstName || ""} ${instructor?.lastName || ""}`.trim()
-
+  
   const handleBuyCourse = () => {
     if (token) {
       buyCourse(token, [courseId], user, navigate, dispatch)
@@ -397,7 +421,8 @@ function CourseDetails() {
                 <div className="flex gap-4 text-gray-300">
                   <span>{courseContent.length} section{courseContent.length !== 1 ? 's' : ''}</span>
                   <span>{totalNoOfLectures} lecture{totalNoOfLectures !== 1 ? 's' : ''}</span>
-                  <span>{response.data?.totalDuration || "Duration not available"} total length</span>
+                  <span className="">{formatDuration(totalDuration)}</span>
+                  <span className="text-sm mt-1 text-gray-500 ml-[-4%]">total length</span>
                 </div>
                 <div>
                   <button
@@ -445,7 +470,7 @@ function CourseDetails() {
               <p className="text-2xl text-white font-semibold font-poppins mt-1">{instructorName}</p>
             </div>
             <p className="text-gray-300 leading-relaxed">
-              {instructor?.additionalDetails?.about || "No additional information available about the instructor."}
+              {instructor?.additionalInfo?.about || "No additional information available about the instructor."}
             </p>
           </section>
         </div>

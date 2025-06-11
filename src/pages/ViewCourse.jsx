@@ -4,7 +4,7 @@ import { Outlet, useParams } from "react-router-dom"
 
 import CourseReviewModal from "../components/sections/ViewCourse/CourseReviewModal"
 import VideoDetailsSidebar from "../components/sections/ViewCourse/VideoDetailsSidebar"
-import { getFullDetailsOfCourse } from "../services/courseApi"
+import { getCompleteCourseDetails } from "../services/courseApi"
 import {
   setCompletedLectures,
   setCourseSectionData,
@@ -23,7 +23,7 @@ export default function ViewCourse() {
     ; (async () => {
       try {
         setIsLoading(true)
-        const courseData = await getFullDetailsOfCourse(courseId, token)
+        const courseData = await getCompleteCourseDetails(courseId, token)
         console.log("Course Data here... ", courseData.courseDetails)
         dispatch(setCourseSectionData(courseData.courseDetails.courseContent))
         dispatch(setEntireCourseData(courseData.courseDetails))
