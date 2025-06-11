@@ -103,7 +103,7 @@ export default function NestedView({ handleChangeEditSectionName }) {
 
               <div className="mt-3 ml-6 space-y-2">
                 {/* Render All Sub Sections Within a Section */}
-                {section.subSection.map((data) => (
+                {section.subSections.map((data) => (
                   <div
                     key={data?._id}
                     onClick={() => setViewSubSection(data)}

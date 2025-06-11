@@ -52,9 +52,8 @@ export default function EditCourse() {
         setLoading(false);
       }
     })();
-  }, [courseId, token, dispatch]); // Added missing dependencies
+  }, [courseId, token, dispatch]); 
 
-  // Debug log to check Redux state
   console.log('Current course in Redux:', course);
 
   if (loading) {
