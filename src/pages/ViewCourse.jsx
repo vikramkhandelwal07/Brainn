@@ -18,29 +18,82 @@ export default function ViewCourse() {
   const dispatch = useDispatch()
   const [reviewModal, setReviewModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     ; (async () => {
       try {
         setIsLoading(true)
-        const courseData = await getCompleteCourseDetails(courseId, token)
-        console.log("Course Data here... ", courseData.courseDetails)
-        dispatch(setCourseSectionData(courseData.courseDetails.courseContent))
-        dispatch(setEntireCourseData(courseData.courseDetails))
-        dispatch(setCompletedLectures(courseData.completedVideos))
+        setError(null)
+
+        console.log("Fetching course data for courseId:", courseId)
+        const response = await getCompleteCourseDetails(courseId, token)
+
+        console.log("Full API Response:", response)
+
+        // Try different possible response structures
+        let courseDetails = null
+        let completedVideos = []
+
+        if (response?.data?.courseDetails) {
+          courseDetails = response.data.courseDetails
+          completedVideos = response.data.completedVideos || []
+        } else if (response?.courseDetails) {
+          courseDetails = response.courseDetails
+          completedVideos = response.completedVideos || []
+        } else if (response?.data) {
+          courseDetails = response.data
+          completedVideos = response.completedVideos || []
+        } else {
+          courseDetails = response
+        }
+
+        console.log("Processed courseDetails:", courseDetails)
+        console.log("Completed videos:", completedVideos)
+
+        if (!courseDetails) {
+          throw new Error("Course details not found in API response")
+        }
+
+        // Handle different possible courseContent structures
+        let courseContent = []
+        if (courseDetails.courseContent) {
+          courseContent = courseDetails.courseContent
+        } else if (courseDetails.sections) {
+          courseContent = courseDetails.sections
+        } else if (Array.isArray(courseDetails)) {
+          courseContent = courseDetails
+        }
+
+        console.log("Course content:", courseContent)
+
+        dispatch(setCourseSectionData(courseContent))
+        dispatch(setEntireCourseData(courseDetails))
+        dispatch(setCompletedLectures(completedVideos))
+
+        // Calculate total lectures
         let lectures = 0
-        courseData?.courseDetails?.courseContent?.forEach((sec) => {
-          lectures += sec.subSection.length
-        })
+        if (Array.isArray(courseContent)) {
+          courseContent.forEach((section) => {
+            if (section.subSections && Array.isArray(section.subSections)) {
+              lectures += section.subSections.length
+            } else if (section.subSection && Array.isArray(section.subSection)) {
+              lectures += section.subSection.length
+            }
+          })
+        }
+
+        console.log("Total lectures calculated:", lectures)
         dispatch(setTotalNoOfLectures(lectures))
+
       } catch (error) {
         console.error("Error loading course data:", error)
+        setError(error.message || "Failed to load course data")
       } finally {
         setIsLoading(false)
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [courseId, token, dispatch])
 
   if (isLoading) {
     return (
@@ -54,6 +107,34 @@ export default function ViewCourse() {
           <span className="ml-4 text-lg font-medium font-poppins text-slate-700 dark:text-slate-300 animate-pulse-slow">
             Loading course content...
           </span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center p-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md rounded-2xl border border-white/20 dark:border-slate-700/50 shadow-xl">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
+              Failed to Load Course
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">
+              {error}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     )

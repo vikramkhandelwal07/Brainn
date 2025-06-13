@@ -3,7 +3,6 @@ import { ChevronDown, ArrowLeft, Star, BookOpen, CheckCircle, Clock, Play } from
 import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 
-
 export default function VideoDetailsSidebar({ setReviewModal }) {
   const [activeStatus, setActiveStatus] = useState("")
   const [videoBarActive, setVideoBarActive] = useState("")
@@ -23,18 +22,19 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
       const currentSectionIndx = courseSectionData.findIndex(
         (data) => data._id === sectionId
       )
-      const currentSubSectionIndx = courseSectionData?.[
-        currentSectionIndx
-      ]?.subSection.findIndex((data) => data._id === subSectionId)
-      const activeSubSectionId =
-        courseSectionData[currentSectionIndx]?.subSection?.[
-          currentSubSectionIndx
-        ]?._id
-      setActiveStatus(courseSectionData?.[currentSectionIndx]?._id)
+
+      if (currentSectionIndx === -1) return
+
+      // Fix: Use subSections instead of subSection
+      const subSections = courseSectionData[currentSectionIndx]?.subSections || courseSectionData[currentSectionIndx]?.subSection || []
+
+      const currentSubSectionIndx = subSections.findIndex((data) => data._id === subSectionId)
+      const activeSubSectionId = subSections[currentSubSectionIndx]?._id
+
+      setActiveStatus(courseSectionData[currentSectionIndx]?._id)
       setVideoBarActive(activeSubSectionId)
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseSectionData, courseEntireData, location.pathname])
+  }, [courseSectionData, courseEntireData, location.pathname, sectionId, subSectionId])
 
   const calculateProgress = () => {
     if (totalNoOfLectures === 0) return 0
@@ -42,10 +42,29 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
   }
 
   const getSectionProgress = (section) => {
-    const completedInSection = section.subSection.filter(sub =>
+    // Fix: Handle both subSections and subSection property names
+    const subSections = section.subSections || section.subSection || []
+
+    if (subSections.length === 0) return 0
+
+    const completedInSection = subSections.filter(sub =>
       completedLectures.includes(sub._id)
     ).length
-    return Math.round((completedInSection / section.subSection.length) * 100)
+    return Math.round((completedInSection / subSections.length) * 100)
+  }
+
+  // Show loading state if courseSectionData is not loaded yet
+  if (!courseSectionData || courseSectionData.length === 0) {
+    return (
+      <div className="flex h-[calc(100vh-3.5rem)] w-[320px] max-w-[350px] flex-col bg-gray-900 border-r border-gray-700 shadow-xl">
+        <div className="flex items-center justify-center flex-1">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-gray-600 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading sidebar...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -83,7 +102,7 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                 Progress
               </span>
               <span className="text-yellow-400 font-semibold">
-                {completedLectures?.length} / {totalNoOfLectures}
+                {completedLectures?.length || 0} / {totalNoOfLectures || 0}
               </span>
             </div>
             <div className="w-full bg-gray-600 rounded-full h-2">
@@ -106,6 +125,9 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
             const sectionProgress = getSectionProgress(course)
             const isActive = activeStatus === course?._id
 
+            // Fix: Handle both subSections and subSection property names
+            const subSections = course.subSections || course.subSection || []
+
             return (
               <div
                 key={index}
@@ -123,7 +145,7 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                     <div className="flex items-center gap-3 text-xs text-gray-400">
                       <span className="flex items-center gap-1">
                         <Play size={12} />
-                        {course?.subSection.length} lessons
+                        {subSections.length} lessons
                       </span>
                       <span className="flex items-center gap-1">
                         <CheckCircle size={12} />
@@ -158,7 +180,7 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                 {/* Sub Sections */}
                 {isActive && (
                   <div className="border-t border-gray-700 bg-gray-850">
-                    {course.subSection.map((topic, i) => {
+                    {subSections.map((topic, i) => {
                       const isCompleted = completedLectures.includes(topic?._id)
                       const isCurrentVideo = videoBarActive === topic._id
 
@@ -166,8 +188,8 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                         <div
                           key={i}
                           className={`flex items-center gap-3 p-3 mx-2 my-1 rounded-lg cursor-pointer transition-all duration-200 ${isCurrentVideo
-                              ? "bg-yellow-500 text-gray-900 shadow-lg"
-                              : "hover:bg-gray-700 text-gray-200"
+                            ? "bg-yellow-500 text-gray-900 shadow-lg"
+                            : "hover:bg-gray-700 text-gray-200"
                             }`}
                           onClick={() => {
                             navigate(
@@ -185,8 +207,8 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                               </div>
                             ) : (
                               <div className={`w-5 h-5 rounded-full border-2 ${isCurrentVideo
-                                  ? 'border-gray-900'
-                                  : 'border-gray-500'
+                                ? 'border-gray-900'
+                                : 'border-gray-500'
                                 }`} />
                             )}
                           </div>
@@ -227,13 +249,13 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
         <div className="grid grid-cols-2 gap-4 text-center">
           <div className="space-y-1">
             <div className="text-2xl font-bold text-yellow-400">
-              {completedLectures?.length}
+              {completedLectures?.length || 0}
             </div>
             <div className="text-xs text-gray-400">Completed</div>
           </div>
           <div className="space-y-1">
             <div className="text-2xl font-bold text-blue-400">
-              {totalNoOfLectures - completedLectures?.length}
+              {(totalNoOfLectures || 0) - (completedLectures?.length || 0)}
             </div>
             <div className="text-xs text-gray-400">Remaining</div>
           </div>

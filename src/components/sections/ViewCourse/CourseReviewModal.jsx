@@ -1,7 +1,6 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { RxCross2 } from "react-icons/rx"
-import ReactStars from "react-rating-stars-component"
 import { useSelector } from "react-redux"
 
 import { createRating } from "../../../services/courseApi"
@@ -11,6 +10,9 @@ export default function CourseReviewModal({ setReviewModal }) {
   const { user } = useSelector((state) => state.userProfile)
   const { token } = useSelector((state) => state.auth)
   const { courseEntireData } = useSelector((state) => state.viewCourse)
+
+  const [rating, setRating] = useState(0)
+  const [hoveredRating, setHoveredRating] = useState(0)
 
   const {
     register,
@@ -26,7 +28,7 @@ export default function CourseReviewModal({ setReviewModal }) {
   }, [])
 
   const ratingChanged = (newRating) => {
-    // console.log(newRating)
+    setRating(newRating)
     setValue("courseRating", newRating)
   }
 
@@ -40,6 +42,47 @@ export default function CourseReviewModal({ setReviewModal }) {
       token
     )
     setReviewModal(false)
+  }
+
+  // Custom Star Rating Component
+  const StarRating = () => {
+    return (
+      <div className="flex justify-center gap-1 p-4 rounded-xl bg-gray-800 border border-gray-700">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => ratingChanged(star)}
+            onMouseEnter={() => setHoveredRating(star)}
+            onMouseLeave={() => setHoveredRating(0)}
+            className="transition-all duration-200 hover:scale-110 focus:outline-none p-1 rounded"
+          >
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              className={`transition-colors duration-200 ${star <= (hoveredRating || rating)
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "fill-gray-600 text-gray-600 hover:fill-yellow-300 hover:text-yellow-300"
+                }`}
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  const getRatingText = () => {
+    const ratingTexts = {
+      1: "Poor",
+      2: "Fair",
+      3: "Good",
+      4: "Very Good",
+      5: "Excellent"
+    }
+    return ratingTexts[rating] || ""
   }
 
   return (
@@ -86,23 +129,19 @@ export default function CourseReviewModal({ setReviewModal }) {
             </div>
           </div>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-8"
-          >
+          <div onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Rating Section */}
-            <div className="text-center space-y-4">
-              <h3 className="text-lg font-semibold text-white mb-2">
-                How would you rate this course?
-              </h3>
-              <div className="flex justify-center p-4 rounded-xl bg-gray-800 border border-gray-700">
-                <ReactStars
-                  count={5}
-                  onChange={ratingChanged}
-                  size={32}
-                  activeColor="#ffd700"
-                  color="#374151"
-                />
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  How would you rate this course?
+                </h3>
+                <StarRating />
+                {rating > 0 && (
+                  <p className="text-yellow-400 font-medium text-sm mt-2">
+                    {getRatingText()}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -112,8 +151,7 @@ export default function CourseReviewModal({ setReviewModal }) {
                 className="block text-sm font-medium text-gray-300"
                 htmlFor="courseExperience"
               >
-                Share your detailed experience
-                <sup className="text-red-400 ml-1">*</sup>
+                Share your detailed experience <sup className="text-red-400 ml-1">*</sup>
               </label>
               <div className="relative">
                 <textarea
@@ -140,9 +178,15 @@ export default function CourseReviewModal({ setReviewModal }) {
               >
                 Cancel
               </button>
-              <IconButton text="Publish Review" />
+              <button
+                type="button"
+                onClick={handleSubmit(onSubmit)}
+                className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-medium rounded-xl transition-colors duration-200"
+              >
+                Publish Review
+              </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

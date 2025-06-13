@@ -40,7 +40,7 @@ const {
   getTopRatedCourses,
 } = require("../controllers/RatingAndReviews");
 
-// const { updateCourseProgress } = require("../controllers/CourseProgress");
+const { updateCourseProgress } = require("../controllers/CourseProgress");
 
 const {
   auth,
@@ -81,7 +81,7 @@ router.delete("/deleteSubSection", auth, isInstructor, deleteSubSection);
 // Course Progress Route
 // ----------------------------------------
 
-// router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
+router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
 
 // ----------------------------------------
 // Category Routes (Admin Only)
