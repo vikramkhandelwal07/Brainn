@@ -35,7 +35,7 @@ export async function buyCourse(
 ) {
   const toastId = toast.loading("Loading...");
   try {
-    //load the script
+    // Load the script
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
@@ -45,7 +45,7 @@ export async function buyCourse(
       return;
     }
 
-    //initiate the order
+    // Initiate the order
     const orderResponse = await apiConnector(
       "POST",
       COURSE_PAYMENT_API,
@@ -58,13 +58,18 @@ export async function buyCourse(
     if (!orderResponse.data.success) {
       throw new Error(orderResponse.data.message);
     }
+
     console.log("PRINTING orderResponse", orderResponse);
-    //options
+
+    // Fixed: Access data.data instead of data.message
+    const paymentData = orderResponse.data.data;
+
+    // Options for Razorpay
     const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY || process.env.RAZORPAY_KEY,
-      currency: orderResponse.data.message.currency,
-      amount: `${orderResponse.data.message.amount}`,
-      order_id: orderResponse.data.message.id,
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID,
+      currency: paymentData.currency,
+      amount: `${paymentData.amount}`,
+      order_id: paymentData.id,
       name: "Brainn",
       description: "Thank You for Purchasing the Course",
       image: BrainnLogo,
@@ -73,20 +78,18 @@ export async function buyCourse(
         email: userDetails.email,
       },
       handler: function (response) {
-        //send successful wala mail
-        sendPaymentSuccessEmail(
-          response,
-          orderResponse.data.message.amount,
-          token
-        );
-        //verifyPayment
+        // Send successful email
+        sendPaymentSuccessEmail(response, paymentData.amount, token);
+        // Verify payment
         verifyPayment({ ...response, courses }, token, navigate, dispatch);
       },
     };
+
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
+
     paymentObject.on("payment.failed", function (response) {
-      toast.error("oops, payment failed");
+      toast.error("Oops, payment failed");
       console.log(response.error);
     });
   } catch (error) {
@@ -115,7 +118,7 @@ async function sendPaymentSuccessEmail(response, amount, token) {
   }
 }
 
-//verify payment
+// Verify payment
 async function verifyPayment(bodyData, token, navigate, dispatch) {
   const toastId = toast.loading("Verifying Payment");
   dispatch(setPaymentLoading(true));
@@ -127,11 +130,12 @@ async function verifyPayment(bodyData, token, navigate, dispatch) {
     if (!response.data.success) {
       throw new Error(response.data.message);
     }
-    toast.success("payment Successful, you are addded to the course");
+
+    toast.success("Payment Successful, you are added to the course");
     navigate("/dashboard/enrolled-courses");
     dispatch(resetCart());
   } catch (error) {
-    console.log("PAYMENT VERIFY ERROR....", error);
+    console.log("PAYMENT VERIFY ERROR", error);
     toast.error("Could not verify Payment");
   }
   toast.dismiss(toastId);

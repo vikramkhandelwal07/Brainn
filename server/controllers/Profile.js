@@ -2,6 +2,7 @@ const Profile = require("../models/Profile");
 const User = require("../models/User");
 const Course = require("../models/Course");
 const { imageUploadCloudinary } = require("../utils/CloudinaryUploader");
+const mongoose = require("mongoose");
 
 exports.updateProfile = async (req, res) => {
   try {
@@ -247,20 +248,29 @@ exports.updateDisplayPicture = async (req, res) => {
 
 exports.getEnrolledCourses = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
 
-    // Find courses where the student is enrolled
-    const courses = await Course.find({ studentsEnrolled: userId })
-      .select("courseName courseDescription price thumbnail instructor")
-      .populate("instructor", "name email"); // populate instructor's basic info
+    // Convert to ObjectId if it's a string
+    const userObjectId = mongoose.Types.ObjectId.isValid(userId)
+      ? new mongoose.Types.ObjectId(userId)
+      : userId;
 
+    const courses = await Course.find({
+      studentsEnrolled: { $in: [userObjectId] },
+    })
+      .select(
+        "courseName courseDescription price thumbnail instructor courseContent"
+      )
+      .populate("instructor", "name email")
+      .populate("courseContent");
+    console.log("DEBUG - req.user in getEnrolledCourses:", req.user);
+    console.log(`Found ${courses.length} enrolled courses for user ${userId}`);
     return res.json({ enrolledCourses: courses });
   } catch (error) {
     console.error("Error fetching enrolled courses:", error);
     return res.status(500).json({ message: "Server error." });
   }
 };
-
 // Instructor dashboard data — summary stats about courses, students, earnings, etc.
 exports.instructorDashboard = async (req, res) => {
   try {

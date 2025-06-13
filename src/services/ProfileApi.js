@@ -38,6 +38,7 @@ export function getUserDetails(token, navigate) {
   };
 }
 
+
 export async function getUserEnrolledCourses(token) {
   const toastId = toast.loading("Loading...");
   let result = [];
@@ -58,13 +59,23 @@ export async function getUserEnrolledCourses(token) {
     console.log("Response status:", response?.status);
     console.log("Response data:", response?.data);
 
-    if (!response?.data?.success) {
-      throw new Error(
-        response?.data?.message || "Failed to fetch enrolled courses"
-      );
+    // Check if response is successful (status 200)
+    if (response?.status !== 200) {
+      throw new Error("Failed to fetch enrolled courses");
     }
 
-    result = response.data.data;
+    // Handle the actual response structure from your backend
+    // Based on your logs, the response is: {enrolledCourses: Array(0)}
+    if (response?.data?.enrolledCourses !== undefined) {
+      result = response.data.enrolledCourses;
+    } else if (response?.data?.success && response?.data?.data) {
+      // Fallback for different response structure
+      result = response.data.data;
+    } else {
+      // If neither structure exists, default to empty array
+      result = [];
+    }
+
     console.log("Enrolled courses result:", result);
   } catch (error) {
     console.log("GET_USER_ENROLLED_COURSES_API API ERROR", error);
@@ -85,6 +96,7 @@ export async function getUserEnrolledCourses(token) {
   toast.dismiss(toastId);
   return result;
 }
+
 export async function getInstructorData(token) {
   const toastId = toast.loading("Loading...");
   let result = [];

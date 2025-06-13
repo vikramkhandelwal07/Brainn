@@ -46,7 +46,7 @@ const contactUsRoutes = require("./routes/contactUs");
 
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/course", courseRoutes);
-app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/contact", contactUsRoutes); 
 

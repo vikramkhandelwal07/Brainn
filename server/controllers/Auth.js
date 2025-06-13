@@ -183,9 +183,12 @@ exports.login = async (req, res) => {
       accountType: user.accountType,
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "7d", // 7 days
-    });
+    const token = jwt.sign(
+      { _id: user._id, email: user.email, accountType: user.accountType },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+    console.log("Decoded JWT:", req.user);
 
     user.token = token;
     user.password = undefined;
