@@ -38,6 +38,7 @@ import EditCourse from "./components/sections/Dashbaord/EditCourse";
 import ViewCourse from "./pages/ViewCourse";
 import VideoDetails from "./components/sections/ViewCourse/VideoDetails";
 
+
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -185,7 +186,9 @@ function App() {
           )}
         </Route>
         <Route path="*" element={<Error />} />
+        
       </Routes>
+      
       {/* <BackToTop /> */}
       {/* <Chatbot /> */}
     </div>

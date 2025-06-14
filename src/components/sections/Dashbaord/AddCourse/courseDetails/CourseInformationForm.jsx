@@ -86,9 +86,7 @@ export default function CourseInformationForm() {
   }
 
   const onSubmit = async (data) => {
-    // Debug: Log the form data
-    console.log("Form data being submitted:", data);
-
+   
     if (editCourse) {
       if (isFormUpdated()) {
         const currentValues = getValues()
@@ -159,9 +157,6 @@ export default function CourseInformationForm() {
     
     formData.append("instructions", JSON.stringify(data.courseRequirements))
     formData.append("thumbnailImage", data.courseImage)
-
-    // Debug: Log FormData contents
-    console.log("FormData being sent:");
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
     }

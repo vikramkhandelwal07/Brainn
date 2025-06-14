@@ -10,10 +10,6 @@ const CourseProgress = require("../models/CourseProgress");
 
 // Capture the payment and initiate the Razorpay order
 exports.capturePayments = async (req, res) => {
-  console.log("=== CAPTURE PAYMENTS DEBUG ===");
-  console.log("Request body:", req.body);
-  console.log("User ID:", req.user?.id);
-
   const { courses } = req.body;
   const userId = req.user.id;
 
@@ -103,7 +99,7 @@ exports.capturePayments = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Could not initiate order.",
-      error: error.message, // Add this for debugging
+      error: error.message, 
     });
   }
 };

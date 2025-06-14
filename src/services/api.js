@@ -69,3 +69,10 @@ export const settingsEndpoints = {
   CHANGE_PASSWORD_API: BASE_URL + "/auth/changepassword",
   DELETE_PROFILE_API: BASE_URL + "/profile/deleteProfile",
 };
+
+export const categoryEndpoints = {
+  CREATE_CATEGORY: "/api/v1/category/create",
+  GET_ALL_CATEGORIES: "/api/v1/category/all",
+  UPDATE_CATEGORY: "/api/v1/category/update",
+  DELETE_CATEGORY: "/api/v1/category/delete",
+};

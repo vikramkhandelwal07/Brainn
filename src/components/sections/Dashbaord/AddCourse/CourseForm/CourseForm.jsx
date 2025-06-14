@@ -31,15 +31,9 @@ export default function CourseForm() {
   const [editSectionName, setEditSectionName] = useState(null)
   const dispatch = useDispatch()
 
-  // Enhanced debugging for form submission
   const onSubmit = async (data) => {
-    console.log("🚀 Form submitted with data:", data)
-    console.log("🏗️ Current course before API call:", JSON.stringify(course, null, 2))
-
     setLoading(true)
-
     let result
-
     try {
       if (editSectionName) {
         console.log("✏️ Updating existing section...")
@@ -174,23 +168,11 @@ export default function CourseForm() {
     dispatch(setEditCourse(true))
   }
 
-  // Debug the current loading state
-  console.log("🔄 Current loading state:", loading)
-  console.log("📊 Current course sections:", course?.courseContent?.length || 0)
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6">
       <div className="mx-auto max-w-4xl">
-        {/* Debug Panel - Remove this in production */}
-        <div className="mb-4 rounded-lg bg-yellow-900/20 border border-yellow-600/30 p-4">
-          <h3 className="text-yellow-400 font-semibold mb-2">🐛 Debug Info (Remove in production)</h3>
-          <div className="text-xs text-yellow-300 space-y-1">
-            <div>Loading: {loading ? '✅ TRUE' : '❌ FALSE'}</div>
-            <div>Course ID: {course?._id || 'Not found'}</div>
-            <div>Sections Count: {course?.courseContent?.length || 0}</div>
-            <div>Edit Mode: {editSectionName ? '✏️ YES' : '➕ NO'}</div>
-          </div>
-        </div>
+        
 
         {/* Header Section */}
         <div className="mb-8 text-center">

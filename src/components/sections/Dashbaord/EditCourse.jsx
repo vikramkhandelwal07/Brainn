@@ -40,7 +40,6 @@ export default function EditCourse() {
         }
 
         if (courseData) {
-          console.log('Course data:', courseData); // Debug log
           dispatch(setEditCourse(true));
           dispatch(setCourse(courseData));
         } else {

@@ -198,7 +198,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom Footer */}
-      <div className="bg-black border-t border-gray-800">
+      <div className="bg-gray-950 border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
             {/* Legal Links */}
@@ -218,6 +218,14 @@ const Footer = () => {
             <div className="text-gray-400 text-sm">
               Made with ❤️ © {new Date().getFullYear()} Brainn
             </div>
+            
+          </div>
+          <div className="w-full bg-gray-950 text-center">
+            <h1 className="text-6xl md:text-8xl lg:text-[20rem] font-black">
+              <span className="bg-gradient-to-t from-black via-pink-950 to-violet-600 bg-clip-text text-transparent font-poppins">
+                Brainn
+              </span>
+            </h1>
           </div>
         </div>
       </div>

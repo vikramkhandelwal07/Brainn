@@ -109,7 +109,7 @@ export default function PublishCourse() {
     handleCoursePublish()
   }
 
-  // Add debug logging for toggle changes
+  
   const handleToggleChange = (e) => {
     console.log("🔄 Toggle changed to:", e.target.checked)
     setValue("public", e.target.checked)
@@ -122,16 +122,7 @@ export default function PublishCourse() {
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-full blur-2xl"></div>
 
       <div className="relative p-8">
-        {/* Debug Panel - Remove in production */}
-        <div className="mb-4 rounded-lg bg-yellow-900/20 border border-yellow-600/30 p-4">
-          <h3 className="text-yellow-400 font-semibold mb-2">🐛 Debug Info</h3>
-          <div className="text-xs text-yellow-300 space-y-1">
-            <div>Course Status: {course?.status || 'Not set'}</div>
-            <div>Toggle Value: {isPublic ? '✅ TRUE' : '❌ FALSE'}</div>
-            <div>Loading: {loading ? '🔄 TRUE' : '⏹️ FALSE'}</div>
-            <div>Course ID: {course?._id || 'Not found'}</div>
-          </div>
-        </div>
+        
 
         {/* Header section */}
         <div className="mb-8">

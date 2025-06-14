@@ -5,8 +5,7 @@ const CourseProgress = require("../models/CourseProgress");
 const Course = require("../models/Course");
 
 exports.updateCourseProgress = async (req, res) => {
-  console.log("Request body:", req.body); // Debug log
-  console.log("User from req.user:", req.user); // Debug log
+  
 
   const { courseId, subSectionId } = req.body;
   const userId = req.user?.id;

@@ -152,13 +152,13 @@ export function Component({
           zIndex: 10
         }}
       >
-        <div className="flex mt-20 w-full px-10 gap-72">
+        <div className="flex mt-20 w-full px-10 gap-72 min-h-screen">
           {/* Left: Text Content */}
           <div>
-            <h1 className="md:text-7xl text-6xl lg:text-8xl font-bold text-white mt-20">
+            <h1 className="md:text-7xl text-6xl lg:text-8xl font-bold text-white mt-[25rem] lg:mt-20 ">
               Ignite Your <br /> Brainn.
             </h1>
-            <p className="text-gray-200 text-3xl mt-6">Learn. Build. Grow</p>
+            <p className="text-gray-200 text-3xl mt-6 ">Learn. Build. Grow</p>
             <p className="text-gray-400 text-lg mt-4 max-w-md">
               Explore a variety of courses designed to help you master new skills, boost your creativity, and accelerate your personal growth.
             </p>
@@ -176,13 +176,13 @@ export function Component({
           </div>
 
 
-          <div className="relative mt-20 w-[30rem] h-[20rem] rounded-3xl overflow-hidden border-white border">
+          <div className="relative mt-24 ml-10 w-[30rem] h-[20rem] rounded-3xl overflow-hidden border-white border">
             {/* Background blur layer */}
             <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-md rounded-3xl border-white border"></div>
 
             <div className="relative border-white border rounded-3xl p-6 shadow-lg text-violet-400 font-mono overflow-hidden h-full w-full">
               <div>
-              
+
               </div>
 
               <div className="absolute top-4 left-6 flex space-x-2 z-10">

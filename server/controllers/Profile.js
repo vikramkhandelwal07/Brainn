@@ -263,8 +263,6 @@ exports.getEnrolledCourses = async (req, res) => {
       )
       .populate("instructor", "name email")
       .populate("courseContent");
-    console.log("DEBUG - req.user in getEnrolledCourses:", req.user);
-    console.log(`Found ${courses.length} enrolled courses for user ${userId}`);
     return res.json({ enrolledCourses: courses });
   } catch (error) {
     console.error("Error fetching enrolled courses:", error);
