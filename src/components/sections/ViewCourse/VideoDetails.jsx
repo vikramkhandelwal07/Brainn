@@ -27,31 +27,56 @@ const VideoDetails = () => {
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [watched, setWatched] = useState(0)
+  const [isDataLoading, setIsDataLoading] = useState(true)
+
+  // Wait for course data to be loaded before proceeding
+  useEffect(() => {
+    if (courseSectionData && courseSectionData.length > 0) {
+      setIsDataLoading(false)
+    } else {
+      setIsDataLoading(true)
+    }
+  }, [courseSectionData])
 
   useEffect(() => {
-    ; (async () => {
-      if (!courseSectionData.length) return
-      if (!courseId && !sectionId && !subSectionId) {
+    if (isDataLoading || !courseSectionData || courseSectionData.length === 0) {
+      return
+    }
+
+    const loadVideoData = async () => {
+      if (!courseId || !sectionId || !subSectionId) {
         navigate(`/dashboard/enrolled-courses`)
-      } else {
-        // Fix: Add null checks and use subSections
+        return
+      }
+
+      try {
+        // Find the section
         const filteredData = courseSectionData.filter(
           (course) => course._id === sectionId
         )
 
-        if (filteredData.length > 0 && filteredData[0].subSections) {
-          const filteredVideoData = filteredData[0].subSections.filter(
-            (data) => data._id === subSectionId
-          )
+        if (filteredData.length > 0) {
+          // Handle both subSections and subSection property names
+          const subSections = filteredData[0].subSections || filteredData[0].subSection || []
+          
+          if (subSections.length > 0) {
+            const filteredVideoData = subSections.filter(
+              (data) => data._id === subSectionId
+            )
 
-          if (filteredVideoData.length > 0) {
-            setVideoData(filteredVideoData[0])
+            if (filteredVideoData.length > 0) {
+              setVideoData(filteredVideoData[0])
+              console.log("Video data loaded:", filteredVideoData[0])
+            } else {
+              console.error("Video data not found for subSectionId:", subSectionId)
+              setVideoData(null)
+            }
           } else {
-            console.error("Video data not found for subSectionId:", subSectionId)
+            console.error("No subsections found for sectionId:", sectionId)
             setVideoData(null)
           }
         } else {
-          console.error("Section data not found or no subSections for sectionId:", sectionId)
+          console.error("Section data not found for sectionId:", sectionId)
           setVideoData(null)
         }
 
@@ -59,12 +84,16 @@ const VideoDetails = () => {
         setVideoEnded(false)
         setProgress(0)
         setWatched(0)
+      } catch (error) {
+        console.error("Error loading video data:", error)
+        setVideoData(null)
       }
-    })()
-  }, [courseSectionData, courseEntireData, location.pathname, courseId, sectionId, subSectionId, navigate])
+    }
+
+    loadVideoData()
+  }, [courseSectionData, courseEntireData, location.pathname, courseId, sectionId, subSectionId, navigate, isDataLoading])
 
   const isFirstVideo = () => {
-    // Add null checks
     if (!courseSectionData || !Array.isArray(courseSectionData) || courseSectionData.length === 0) {
       return false
     }
@@ -73,11 +102,18 @@ const VideoDetails = () => {
       (data) => data._id === sectionId
     )
 
-    if (currentSectionIndx === -1 || !courseSectionData[currentSectionIndx]?.subSections) {
+    if (currentSectionIndx === -1) {
       return false
     }
 
-    const currentSubSectionIndx = courseSectionData[currentSectionIndx].subSections.findIndex(
+    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
+                       courseSectionData[currentSectionIndx]?.subSection || []
+
+    if (subSections.length === 0) {
+      return false
+    }
+
+    const currentSubSectionIndx = subSections.findIndex(
       (data) => data._id === subSectionId
     )
 
@@ -85,43 +121,48 @@ const VideoDetails = () => {
   }
 
   const goToNextVideo = () => {
-    // Add null checks
     if (!courseSectionData || !Array.isArray(courseSectionData)) return
 
     const currentSectionIndx = courseSectionData.findIndex(
       (data) => data._id === sectionId
     )
 
-    if (currentSectionIndx === -1 || !courseSectionData[currentSectionIndx]?.subSections) return
+    if (currentSectionIndx === -1) return
 
-    const noOfSubsections = courseSectionData[currentSectionIndx].subSections.length
-    const currentSubSectionIndx = courseSectionData[currentSectionIndx].subSections.findIndex(
+    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
+                       courseSectionData[currentSectionIndx]?.subSection || []
+
+    if (subSections.length === 0) return
+
+    const noOfSubsections = subSections.length
+    const currentSubSectionIndx = subSections.findIndex(
       (data) => data._id === subSectionId
     )
 
     if (currentSubSectionIndx !== noOfSubsections - 1) {
-      const nextSubSectionId =
-        courseSectionData[currentSectionIndx].subSections[
-          currentSubSectionIndx + 1
-        ]._id
+      // Move to next video in same section
+      const nextSubSectionId = subSections[currentSubSectionIndx + 1]._id
       navigate(
         `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}`
       )
     } else {
-      // Check if there's a next section
-      if (currentSectionIndx + 1 < courseSectionData.length &&
-        courseSectionData[currentSectionIndx + 1]?.subSections?.length > 0) {
-        const nextSectionId = courseSectionData[currentSectionIndx + 1]._id
-        const nextSubSectionId = courseSectionData[currentSectionIndx + 1].subSections[0]._id
-        navigate(
-          `/view-course/${courseId}/section/${nextSectionId}/sub-section/${nextSubSectionId}`
-        )
+      // Move to first video of next section
+      if (currentSectionIndx + 1 < courseSectionData.length) {
+        const nextSection = courseSectionData[currentSectionIndx + 1]
+        const nextSectionSubSections = nextSection?.subSections || nextSection?.subSection || []
+        
+        if (nextSectionSubSections.length > 0) {
+          const nextSectionId = nextSection._id
+          const nextSubSectionId = nextSectionSubSections[0]._id
+          navigate(
+            `/view-course/${courseId}/section/${nextSectionId}/sub-section/${nextSubSectionId}`
+          )
+        }
       }
     }
   }
 
   const isLastVideo = () => {
-    // Add null checks
     if (!courseSectionData || !Array.isArray(courseSectionData) || courseSectionData.length === 0) {
       return false
     }
@@ -130,12 +171,19 @@ const VideoDetails = () => {
       (data) => data._id === sectionId
     )
 
-    if (currentSectionIndx === -1 || !courseSectionData[currentSectionIndx]?.subSections) {
+    if (currentSectionIndx === -1) {
       return false
     }
 
-    const noOfSubsections = courseSectionData[currentSectionIndx].subSections.length
-    const currentSubSectionIndx = courseSectionData[currentSectionIndx].subSections.findIndex(
+    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
+                       courseSectionData[currentSectionIndx]?.subSection || []
+
+    if (subSections.length === 0) {
+      return false
+    }
+
+    const noOfSubsections = subSections.length
+    const currentSubSectionIndx = subSections.findIndex(
       (data) => data._id === subSectionId
     )
 
@@ -146,54 +194,77 @@ const VideoDetails = () => {
   }
 
   const goToPrevVideo = () => {
-    // Add null checks
     if (!courseSectionData || !Array.isArray(courseSectionData)) return
 
     const currentSectionIndx = courseSectionData.findIndex(
       (data) => data._id === sectionId
     )
 
-    if (currentSectionIndx === -1 || !courseSectionData[currentSectionIndx]?.subSections) return
+    if (currentSectionIndx === -1) return
 
-    const currentSubSectionIndx = courseSectionData[currentSectionIndx].subSections.findIndex(
+    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
+                       courseSectionData[currentSectionIndx]?.subSection || []
+
+    if (subSections.length === 0) return
+
+    const currentSubSectionIndx = subSections.findIndex(
       (data) => data._id === subSectionId
     )
 
     if (currentSubSectionIndx !== 0) {
-      const prevSubSectionId =
-        courseSectionData[currentSectionIndx].subSections[
-          currentSubSectionIndx - 1
-        ]._id
+      // Move to previous video in same section
+      const prevSubSectionId = subSections[currentSubSectionIndx - 1]._id
       navigate(
         `/view-course/${courseId}/section/${sectionId}/sub-section/${prevSubSectionId}`
       )
     } else {
-      // Check if there's a previous section
-      if (currentSectionIndx - 1 >= 0 &&
-        courseSectionData[currentSectionIndx - 1]?.subSections?.length > 0) {
-        const prevSectionId = courseSectionData[currentSectionIndx - 1]._id
-        const prevSubSectionLength = courseSectionData[currentSectionIndx - 1].subSections.length
-        const prevSubSectionId =
-          courseSectionData[currentSectionIndx - 1].subSections[
-            prevSubSectionLength - 1
-          ]._id
-        navigate(
-          `/view-course/${courseId}/section/${prevSectionId}/sub-section/${prevSubSectionId}`
-        )
+      // Move to last video of previous section
+      if (currentSectionIndx - 1 >= 0) {
+        const prevSection = courseSectionData[currentSectionIndx - 1]
+        const prevSectionSubSections = prevSection?.subSections || prevSection?.subSection || []
+        
+        if (prevSectionSubSections.length > 0) {
+          const prevSectionId = prevSection._id
+          const prevSubSectionLength = prevSectionSubSections.length
+          const prevSubSectionId = prevSectionSubSections[prevSubSectionLength - 1]._id
+          navigate(
+            `/view-course/${courseId}/section/${prevSectionId}/sub-section/${prevSubSectionId}`
+          )
+        }
       }
     }
   }
 
   const handleLectureCompletion = async () => {
+    console.log("Token from Redux:", token); 
     setLoading(true)
-    const res = await markLectureAsComplete(
-      { courseId: courseId, subsectionId: subSectionId },
-      token
-    )
-    if (res) {
-      dispatch(updateCompletedLectures(subSectionId))
+    try {
+      const res = await markLectureAsComplete(
+        { courseId: courseId, subSectionId: subSectionId },
+        token
+      )
+      if (res) {
+        dispatch(updateCompletedLectures(subSectionId))
+        
+        // Also update localStorage for persistence
+        try {
+          const existingData = localStorage.getItem(`course_${courseId}`)
+          if (existingData) {
+            const courseData = JSON.parse(existingData)
+            const updatedCompletedVideos = [...(courseData.completedVideos || []), subSectionId]
+            courseData.completedVideos = [...new Set(updatedCompletedVideos)] // Remove duplicates
+            courseData.timestamp = Date.now()
+            localStorage.setItem(`course_${courseId}`, JSON.stringify(courseData))
+          }
+        } catch (storageError) {
+          console.error("Error updating localStorage:", storageError)
+        }
+      }
+    } catch (error) {
+      console.error("Error marking lecture as complete:", error)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const handleProgress = (progressData) => {
@@ -226,10 +297,11 @@ const VideoDetails = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  const isCompleted = completedLectures.includes(subSectionId)
+  // Check if current video is completed
+  const isCompleted = completedLectures && completedLectures.includes(subSectionId)
 
-  // Show loading state if courseSectionData is not loaded yet
-  if (!courseSectionData || courseSectionData.length === 0) {
+  // Show loading state if course data is not loaded yet
+  if (isDataLoading || !courseSectionData || courseSectionData.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

@@ -49,9 +49,6 @@ const {
   isAdmin,
 } = require("../middlewares/auth");
 
-// ----------------------------------------
-// Course Routes
-// ----------------------------------------
 
 router.post("/createCourse", auth, isInstructor, createCourse);
 router.get("/getAllCourses", getAllCourses);
@@ -61,39 +58,22 @@ router.put("/editCourse", auth, isInstructor, editCourse);
 router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
 router.delete("/deleteCourse", auth, isInstructor, deleteCourse);
 
-// ----------------------------------------
-// Section Routes
-// ----------------------------------------
-
 router.post("/addSection", auth, isInstructor, createSection);
 router.put("/updateSection", auth, isInstructor, updateSection);
 router.delete("/deleteSection", auth, isInstructor, deleteSection);
-
-// ----------------------------------------
-// Sub-Section Routes
-// ----------------------------------------
 
 router.post("/addSubSection", auth, isInstructor, createSubSection);
 router.put("/updateSubSection", auth, isInstructor, updateSubSection);
 router.delete("/deleteSubSection", auth, isInstructor, deleteSubSection);
 
-// ----------------------------------------
-// Course Progress Route
-// ----------------------------------------
 
 router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
 
-// ----------------------------------------
-// Category Routes (Admin Only)
-// ----------------------------------------
 
 router.post("/createCategory", auth, isAdmin, createCategory);
 router.get("/getAllCategories", getAllCategories);
 router.post("/getCategoryPageDetails", completeCategoryPageDetails);
 
-// ----------------------------------------
-// Rating & Review Routes
-// ----------------------------------------
 
 router.post("/createRating", auth, isStudent, createRatingReviews);
 router.get("/getAverageRating", getAvgRatingReviews);

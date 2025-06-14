@@ -340,6 +340,9 @@ export const getCompleteCourseDetails = async (courseId, token) => {
 };
 
 export const markLectureAsComplete = async (data, token) => {
+  
+  console.log("API call data:", data); // Debug log
+  console.log("Token exists:", !!token); // Debug log
   let result = null;
   console.log("mark complete data", data);
   const toastId = toast.loading("Loading...");

@@ -20,8 +20,15 @@ export default function ViewCourse() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Load course data on component mount and whenever courseId or token changes
   useEffect(() => {
-    ; (async () => {
+    const loadCourseData = async () => {
+      if (!courseId || !token) {
+        setError("Missing course ID or authentication token")
+        setIsLoading(false)
+        return
+      }
+
       try {
         setIsLoading(true)
         setError(null)
@@ -46,6 +53,7 @@ export default function ViewCourse() {
           completedVideos = response.completedVideos || []
         } else {
           courseDetails = response
+          completedVideos = response?.completedVideos || []
         }
 
         console.log("Processed courseDetails:", courseDetails)
@@ -67,6 +75,7 @@ export default function ViewCourse() {
 
         console.log("Course content:", courseContent)
 
+        // Dispatch actions to update Redux state
         dispatch(setCourseSectionData(courseContent))
         dispatch(setEntireCourseData(courseDetails))
         dispatch(setCompletedLectures(completedVideos))
@@ -86,14 +95,58 @@ export default function ViewCourse() {
         console.log("Total lectures calculated:", lectures)
         dispatch(setTotalNoOfLectures(lectures))
 
+        // Store the course data in localStorage as backup
+        const courseData = {
+          courseContent,
+          courseDetails,
+          completedVideos,
+          totalLectures: lectures,
+          timestamp: Date.now()
+        }
+        localStorage.setItem(`course_${courseId}`, JSON.stringify(courseData))
+
       } catch (error) {
         console.error("Error loading course data:", error)
         setError(error.message || "Failed to load course data")
+
+        // Try to load from localStorage as fallback
+        try {
+          const cachedData = localStorage.getItem(`course_${courseId}`)
+          if (cachedData) {
+            const parsedData = JSON.parse(cachedData)
+            // Only use cached data if it's less than 1 hour old
+            if (Date.now() - parsedData.timestamp < 3600000) {
+              console.log("Loading course data from cache")
+              dispatch(setCourseSectionData(parsedData.courseContent))
+              dispatch(setEntireCourseData(parsedData.courseDetails))
+              dispatch(setCompletedLectures(parsedData.completedVideos))
+              dispatch(setTotalNoOfLectures(parsedData.totalLectures))
+              setError(null)
+            }
+          }
+        } catch (cacheError) {
+          console.error("Error loading from cache:", cacheError)
+        }
       } finally {
         setIsLoading(false)
       }
-    })()
+    }
+
+    loadCourseData()
   }, [courseId, token, dispatch])
+
+  // Clear localStorage when component unmounts or courseId changes
+  useEffect(() => {
+    return () => {
+      // Clean up old course data when navigating away
+      const allKeys = Object.keys(localStorage)
+      allKeys.forEach(key => {
+        if (key.startsWith('course_') && key !== `course_${courseId}`) {
+          localStorage.removeItem(key)
+        }
+      })
+    }
+  }, [courseId])
 
   if (isLoading) {
     return (

@@ -6,9 +6,11 @@ import { useLocation, useNavigate, useParams } from "react-router-dom"
 export default function VideoDetailsSidebar({ setReviewModal }) {
   const [activeStatus, setActiveStatus] = useState("")
   const [videoBarActive, setVideoBarActive] = useState("")
+  const [isDataLoading, setIsDataLoading] = useState(true)
   const navigate = useNavigate()
   const location = useLocation()
   const { sectionId, subSectionId } = useParams()
+
   const {
     courseSectionData,
     courseEntireData,
@@ -17,44 +19,102 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
   } = useSelector((state) => state.viewCourse)
 
   useEffect(() => {
-    ; (() => {
-      if (!courseSectionData.length) return
-      const currentSectionIndx = courseSectionData.findIndex(
-        (data) => data._id === sectionId
-      )
+    if (courseSectionData && courseSectionData.length > 0) {
+      setIsDataLoading(false)
+    } else {
+      setIsDataLoading(true)
+    }
+  }, [courseSectionData])
 
-      if (currentSectionIndx === -1) return
+  useEffect(() => {
+    if (isDataLoading || !courseSectionData || courseSectionData.length === 0) {
+      return
+    }
 
-      // Fix: Use subSections instead of subSection
-      const subSections = courseSectionData[currentSectionIndx]?.subSections || courseSectionData[currentSectionIndx]?.subSection || []
+    const setActiveStates = () => {
+      try {
+        const currentSectionIndx = courseSectionData.findIndex(
+          (data) => data._id === sectionId
+        )
 
-      const currentSubSectionIndx = subSections.findIndex((data) => data._id === subSectionId)
-      const activeSubSectionId = subSections[currentSubSectionIndx]?._id
+        if (currentSectionIndx === -1) {
+          console.warn("Section not found:", sectionId)
+          return
+        }
 
-      setActiveStatus(courseSectionData[currentSectionIndx]?._id)
-      setVideoBarActive(activeSubSectionId)
-    })()
-  }, [courseSectionData, courseEntireData, location.pathname, sectionId, subSectionId])
+        const subSections = courseSectionData[currentSectionIndx]?.subSections ||
+          courseSectionData[currentSectionIndx]?.subSection || []
+
+        if (subSections.length === 0) {
+          console.warn("No subsections found for section:", sectionId)
+          return
+        }
+
+        const currentSubSectionIndx = subSections.findIndex((data) => data._id === subSectionId)
+
+        if (currentSubSectionIndx === -1) {
+          console.warn("Subsection not found:", subSectionId)
+          return
+        }
+
+        const activeSubSectionId = subSections[currentSubSectionIndx]?._id
+
+        setActiveStatus(courseSectionData[currentSectionIndx]?._id)
+        setVideoBarActive(activeSubSectionId)
+
+        console.log("Active states set:", {
+          activeSection: courseSectionData[currentSectionIndx]?._id,
+          activeSubSection: activeSubSectionId
+        })
+      } catch (error) {
+        console.error("Error setting active states:", error)
+      }
+    }
+
+    setActiveStates()
+  }, [courseSectionData, courseEntireData, location.pathname, sectionId, subSectionId, isDataLoading])
 
   const calculateProgress = () => {
-    if (totalNoOfLectures === 0) return 0
-    return Math.round((completedLectures?.length / totalNoOfLectures) * 100)
+    if (!totalNoOfLectures || totalNoOfLectures === 0) return 0
+    if (!completedLectures || completedLectures.length === 0) return 0
+    return Math.round((completedLectures.length / totalNoOfLectures) * 100)
   }
 
   const getSectionProgress = (section) => {
-    // Fix: Handle both subSections and subSection property names
-    const subSections = section.subSections || section.subSection || []
+    try {
+      // Handle both subSections and subSection property names
+      const subSections = section.subSections || section.subSection || []
 
-    if (subSections.length === 0) return 0
+      if (subSections.length === 0) return 0
 
-    const completedInSection = subSections.filter(sub =>
-      completedLectures.includes(sub._id)
-    ).length
-    return Math.round((completedInSection / subSections.length) * 100)
+      if (!completedLectures || completedLectures.length === 0) return 0
+
+      const completedInSection = subSections.filter(sub =>
+        completedLectures.includes(sub._id)
+      ).length
+
+      return Math.round((completedInSection / subSections.length) * 100)
+    } catch (error) {
+      console.error("Error calculating section progress:", error)
+      return 0
+    }
   }
 
-  // Show loading state if courseSectionData is not loaded yet
-  if (!courseSectionData || courseSectionData.length === 0) {
+  const handleVideoClick = (courseId, sectionId, subSectionId) => {
+    try {
+      setVideoBarActive(subSectionId)
+      navigate(`/view-course/${courseId}/section/${sectionId}/sub-section/${subSectionId}`)
+    } catch (error) {
+      console.error("Error navigating to video:", error)
+    }
+  }
+
+  const handleSectionToggle = (sectionId) => {
+    setActiveStatus(activeStatus === sectionId ? "" : sectionId)
+  }
+
+  // Show loading state if course data is not loaded yet
+  if (isDataLoading || !courseSectionData || courseSectionData.length === 0) {
     return (
       <div className="flex h-[calc(100vh-3.5rem)] w-[320px] max-w-[350px] flex-col bg-gray-900 border-r border-gray-700 shadow-xl">
         <div className="flex items-center justify-center flex-1">
@@ -79,19 +139,21 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
           >
             <ArrowLeft size={20} />
           </button>
-          <button
-            onClick={() => setReviewModal(true)}
-            className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2 text-sm"
-          >
-            <Star size={16} />
-            Add Review
-          </button>
+          {setReviewModal && (
+            <button
+              onClick={() => setReviewModal(true)}
+              className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2 text-sm"
+            >
+              <Star size={16} />
+              Add Review
+            </button>
+          )}
         </div>
 
         {/* Course Info */}
         <div className="space-y-3">
           <h2 className="text-white font-bold text-lg leading-tight line-clamp-2">
-            {courseEntireData?.courseName}
+            {courseEntireData?.courseName || "Course Name"}
           </h2>
 
           {/* Progress Section */}
@@ -124,19 +186,17 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
           {courseSectionData.map((course, index) => {
             const sectionProgress = getSectionProgress(course)
             const isActive = activeStatus === course?._id
-
-            // Fix: Handle both subSections and subSection property names
             const subSections = course.subSections || course.subSection || []
 
             return (
               <div
-                key={index}
+                key={course?._id || index}
                 className="mb-2 bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-gray-600 transition-colors duration-200"
               >
                 {/* Section Header */}
                 <div
                   className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-750 transition-colors duration-200"
-                  onClick={() => setActiveStatus(isActive ? "" : course?._id)}
+                  onClick={() => handleSectionToggle(course?._id)}
                 >
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-white text-sm mb-1 truncate">
@@ -181,22 +241,21 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                 {isActive && (
                   <div className="border-t border-gray-700 bg-gray-850">
                     {subSections.map((topic, i) => {
-                      const isCompleted = completedLectures.includes(topic?._id)
+                      const isCompleted = completedLectures?.includes(topic?._id)
                       const isCurrentVideo = videoBarActive === topic._id
 
                       return (
                         <div
-                          key={i}
+                          key={topic?._id || i}
                           className={`flex items-center gap-3 p-3 mx-2 my-1 rounded-lg cursor-pointer transition-all duration-200 ${isCurrentVideo
-                            ? "bg-yellow-500 text-gray-900 shadow-lg"
-                            : "hover:bg-gray-700 text-gray-200"
+                              ? "bg-yellow-500 text-gray-900 shadow-lg"
+                              : "hover:bg-gray-700 text-gray-200"
                             }`}
-                          onClick={() => {
-                            navigate(
-                              `/view-course/${courseEntireData?._id}/section/${course?._id}/sub-section/${topic?._id}`
-                            )
-                            setVideoBarActive(topic._id)
-                          }}
+                          onClick={() => handleVideoClick(
+                            courseEntireData?._id,
+                            course?._id,
+                            topic?._id
+                          )}
                         >
                           {/* Completion Checkbox */}
                           <div className={`flex-shrink-0 ${isCurrentVideo ? 'text-gray-900' : ''}`}>
@@ -207,8 +266,8 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                               </div>
                             ) : (
                               <div className={`w-5 h-5 rounded-full border-2 ${isCurrentVideo
-                                ? 'border-gray-900'
-                                : 'border-gray-500'
+                                  ? 'border-gray-900'
+                                  : 'border-gray-500'
                                 }`} />
                             )}
                           </div>
@@ -219,6 +278,15 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                               }`}>
                               {topic.title}
                             </p>
+                            {topic.timeDuration && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <Clock size={10} className={isCurrentVideo ? 'text-gray-900' : 'text-gray-500'} />
+                                <span className={`text-xs ${isCurrentVideo ? 'text-gray-900' : 'text-gray-500'
+                                  }`}>
+                                  {topic.timeDuration}
+                                </span>
+                              </div>
+                            )}
                             {isCurrentVideo && (
                               <div className="flex items-center gap-1 mt-1">
                                 <div className="w-2 h-2 bg-gray-900 rounded-full animate-pulse" />
