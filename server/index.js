@@ -9,9 +9,9 @@ const { cloudinaryConnect } = require("./config/cloudinary");
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:4000",
   "http://localhost:5173",
   "https://brainn-ai.vercel.app",
+  "https://brainn-vikrams-projects-6d8fbf19.vercel.app",
 ];
 
 app.use(
