@@ -12,30 +12,61 @@ export default function MyEnrolledCourses() {
   const navigate = useNavigate()
 
   const [enrolledCourses, setEnrolledCourses] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const getEnrolledCourses = async () => {
     try {
+      setLoading(true)
+      setError(null)
+
+      console.log("Fetching enrolled courses with token:", token ? "Token exists" : "No token")
+
       const res = await getUserEnrolledCourses(token);
-      setEnrolledCourses(res);
+
+      console.log("Enrolled courses response:", res)
+
+      // Handle different response formats
+      if (res && Array.isArray(res)) {
+        setEnrolledCourses(res);
+      } else if (res && res.enrolledCourses && Array.isArray(res.enrolledCourses)) {
+        setEnrolledCourses(res.enrolledCourses);
+      } else if (res && res.data && Array.isArray(res.data)) {
+        setEnrolledCourses(res.data);
+      } else {
+        console.warn("Unexpected response format:", res)
+        setEnrolledCourses([]);
+      }
     } catch (error) {
-      console.log("Could not fetch enrolled courses.")
+      console.error("Could not fetch enrolled courses:", error)
+      setError("Failed to load enrolled courses. Please try again.")
+      setEnrolledCourses([])
+    } finally {
+      setLoading(false)
     }
   };
 
   useEffect(() => {
-    getEnrolledCourses();
-  }, [])
+    if (token) {
+      getEnrolledCourses();
+    } else {
+      setLoading(false)
+      setError("Authentication required")
+    }
+  }, [token])
 
   // Refetch courses when the page becomes visible/focused
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
+      if (!document.hidden && token) {
         getEnrolledCourses();
       }
     };
 
     const handleFocus = () => {
-      getEnrolledCourses();
+      if (token) {
+        getEnrolledCourses();
+      }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -46,6 +77,16 @@ export default function MyEnrolledCourses() {
       window.removeEventListener('focus', handleFocus);
     };
   }, [token]);
+
+  // Debug information
+  useEffect(() => {
+    console.log("Component state:", {
+      enrolledCourses,
+      loading,
+      error,
+      token: token ? "exists" : "missing"
+    })
+  }, [enrolledCourses, loading, error, token])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
@@ -59,7 +100,25 @@ export default function MyEnrolledCourses() {
           <div className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"></div>
         </div>
 
-        {!enrolledCourses ? (
+        {/* Error State */}
+        {error && (
+          <div className="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
+            <div className="flex items-center">
+              <svg className="h-5 w-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-red-800">{error}</p>
+              <button
+                onClick={getEnrolledCourses}
+                className="ml-auto text-red-600 hover:text-red-800 font-medium"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        )}
+
+        {loading ? (
           // Loading State
           <div className="flex min-h-[400px] items-center justify-center">
             <div className="text-center">
@@ -67,7 +126,7 @@ export default function MyEnrolledCourses() {
               <p className="text-lg text-gray-600">Loading your courses...</p>
             </div>
           </div>
-        ) : !enrolledCourses.length ? (
+        ) : !enrolledCourses || !enrolledCourses.length ? (
           // Empty State
           <div className="flex min-h-[400px] items-center justify-center">
             <div className="text-center">
@@ -78,9 +137,21 @@ export default function MyEnrolledCourses() {
               </div>
               <h3 className="mb-2 text-2xl font-semibold text-gray-800">No courses yet</h3>
               <p className="mb-6 text-gray-600">Start your learning journey by enrolling in a course</p>
-              <button className="rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl">
-                Browse Courses
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => navigate('/courses')}
+                  className="rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
+                >
+                  Browse Courses
+                </button>
+                <br />
+                <button
+                  onClick={getEnrolledCourses}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Refresh courses
+                </button>
+              </div>
             </div>
           </div>
         ) : (
@@ -90,12 +161,13 @@ export default function MyEnrolledCourses() {
             <div className="flex justify-end">
               <button
                 onClick={getEnrolledCourses}
-                className="flex items-center gap-2 rounded-lg bg-white/80 backdrop-blur-sm border border-gray-200/50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md"
+                disabled={loading}
+                className="flex items-center gap-2 rounded-lg bg-white/80 backdrop-blur-sm border border-gray-200/50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md disabled:opacity-50"
               >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Refresh
+                {loading ? 'Refreshing...' : 'Refresh'}
               </button>
             </div>
 
@@ -148,11 +220,11 @@ export default function MyEnrolledCourses() {
               </div>
             </div>
 
-            {/* Courses Grid */}
+            {/* Rest of your courses rendering code remains the same */}
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {enrolledCourses.map((course, i) => (
                 <div
-                  key={i}
+                  key={course._id || i}
                   className="group cursor-pointer rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200/50 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
                   onClick={() => {
                     navigate(
@@ -160,7 +232,7 @@ export default function MyEnrolledCourses() {
                     )
                   }}
                 >
-                  {/* Course Image and Badge */}
+                  {/* Course content remains the same */}
                   <div className="relative mb-4">
                     <img
                       src={course.thumbnail}
@@ -183,19 +255,17 @@ export default function MyEnrolledCourses() {
                     </div>
                   </div>
 
-                  {/* Course Content */}
                   <div className="space-y-3">
                     <h3 className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
                       {course.courseName}
                     </h3>
 
                     <p className="text-sm text-gray-600 line-clamp-2">
-                      {course.courseDescription.length > 100
+                      {course.courseDescription?.length > 100
                         ? `${course.courseDescription.slice(0, 100)}...`
                         : course.courseDescription}
                     </p>
 
-                    {/* Duration */}
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -203,7 +273,6 @@ export default function MyEnrolledCourses() {
                       <span>{course?.totalDuration || 'Duration not specified'}</span>
                     </div>
 
-                    {/* Progress Section */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-gray-700">Progress</span>
@@ -221,7 +290,6 @@ export default function MyEnrolledCourses() {
                       />
                     </div>
 
-                    {/* Continue Learning Button */}
                     <div className="pt-2">
                       <div className="flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 py-2 text-sm font-semibold text-white opacity-0 transition-all duration-300 group-hover:opacity-100">
                         Continue Learning

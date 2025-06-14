@@ -43,7 +43,7 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
         }
 
         const subSections = courseSectionData[currentSectionIndx]?.subSections ||
-          courseSectionData[currentSectionIndx]?.subSection || []
+          courseSectionData[currentSectionIndx]?.subSections || []
 
         if (subSections.length === 0) {
           console.warn("No subsections found for section:", sectionId)
@@ -53,7 +53,7 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
         const currentSubSectionIndx = subSections.findIndex((data) => data._id === subSectionId)
 
         if (currentSubSectionIndx === -1) {
-          console.warn("Subsection not found:", subSectionId)
+          console.warn("SubSection not found:", subSectionId)
           return
         }
 
@@ -82,7 +82,6 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
 
   const getSectionProgress = (section) => {
     try {
-      // Handle both subSections and subSection property names
       const subSections = section.subSections || section.subSection || []
 
       if (subSections.length === 0) return 0

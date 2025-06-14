@@ -248,27 +248,90 @@ exports.updateDisplayPicture = async (req, res) => {
 
 exports.getEnrolledCourses = async (req, res) => {
   try {
-    const userId = req.user.id;
+    // Try different user ID sources
+    const userId = req.user.id || req.user._id;
 
-    // Convert to ObjectId if it's a string
-    const userObjectId = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    console.log("=== DEBUGGING ENROLLED COURSES ===");
+    console.log("req.user:", req.user);
+    console.log("userId:", userId);
 
-    const courses = await Course.find({
-      studentsEnrolled: { $in: [userObjectId] },
+    // Try multiple query approaches
+    let courses = [];
+
+    // Approach 1: Direct match with original userId
+    courses = await Course.find({
+      studentsEnrolled: userId,
+    });
+
+    if (courses.length === 0) {
+      // Approach 2: Try with ObjectId conversion
+      const objectId = new mongoose.Types.ObjectId(userId);
+      courses = await Course.find({
+        studentsEnrolled: objectId,
+      });
+    }
+
+    if (courses.length === 0) {
+      // Approach 3: Try with $in operator
+      courses = await Course.find({
+        studentsEnrolled: {
+          $in: [userId, new mongoose.Types.ObjectId(userId)],
+        },
+      });
+    }
+
+    console.log("Found courses:", courses.length);
+
+    // Apply selections and population
+    const finalCourses = await Course.find({
+      _id: { $in: courses.map((c) => c._id) },
     })
       .select(
         "courseName courseDescription price thumbnail instructor courseContent"
       )
       .populate("instructor", "name email")
       .populate("courseContent");
-    return res.json({ enrolledCourses: courses });
+
+    return res.json({ enrolledCourses: finalCourses });
   } catch (error) {
     console.error("Error fetching enrolled courses:", error);
     return res.status(500).json({ message: "Server error." });
   }
 };
+
+// Also add this helper function to check your data
+exports.debugEnrolledCourses = async (req, res) => {
+  try {
+    const userId = req.user.id || req.user._id;
+
+    // Get sample courses to see data structure
+    const sampleCourses = await Course.find({})
+      .limit(5)
+      .select("courseName studentsEnrolled");
+
+    // Check if user exists in any course
+    const userInCourses = await Course.find({
+      $or: [
+        { studentsEnrolled: userId },
+        { studentsEnrolled: userId.toString() },
+        { studentsEnrolled: new mongoose.Types.ObjectId(userId) },
+      ],
+    }).select("courseName studentsEnrolled");
+
+    return res.json({
+      userId,
+      userIdType: typeof userId,
+      sampleCourses,
+      userInCourses,
+      totalCourses: await Course.countDocuments(),
+    });
+  } catch (error) {
+    console.error("Debug error:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
 // Instructor dashboard data — summary stats about courses, students, earnings, etc.
 exports.instructorDashboard = async (req, res) => {
   try {
