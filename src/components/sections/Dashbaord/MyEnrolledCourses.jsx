@@ -12,25 +12,47 @@ export default function MyEnrolledCourses() {
   const navigate = useNavigate()
 
   const [enrolledCourses, setEnrolledCourses] = useState(null)
+
   const getEnrolledCourses = async () => {
     try {
       const res = await getUserEnrolledCourses(token);
-
       setEnrolledCourses(res);
     } catch (error) {
       console.log("Could not fetch enrolled courses.")
     }
   };
+
   useEffect(() => {
     getEnrolledCourses();
   }, [])
+
+  // Refetch courses when the page becomes visible/focused
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        getEnrolledCourses();
+      }
+    };
+
+    const handleFocus = () => {
+      getEnrolledCourses();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [token]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
         <div className="mb-8 text-center">
-          <h1 className="mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+          <h1 className="mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent md:text-5xl py-10">
             My Learning Journey
           </h1>
           <p className="text-lg text-gray-600">Track your progress and continue learning</p>
@@ -64,6 +86,19 @@ export default function MyEnrolledCourses() {
         ) : (
           // Courses List
           <div className="space-y-6">
+            {/* Refresh Button */}
+            <div className="flex justify-end">
+              <button
+                onClick={getEnrolledCourses}
+                className="flex items-center gap-2 rounded-lg bg-white/80 backdrop-blur-sm border border-gray-200/50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
+              </button>
+            </div>
+
             {/* Stats Overview */}
             <div className="grid gap-4 md:grid-cols-3">
               <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200/50 p-6 shadow-lg">
@@ -134,10 +169,10 @@ export default function MyEnrolledCourses() {
                     />
                     <div className="absolute right-3 top-3">
                       <div className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${(course.progressPercentage || 0) === 100
-                          ? 'bg-green-500'
-                          : (course.progressPercentage || 0) > 0
-                            ? 'bg-orange-500'
-                            : 'bg-gray-500'
+                        ? 'bg-green-500'
+                        : (course.progressPercentage || 0) > 0
+                          ? 'bg-orange-500'
+                          : 'bg-gray-500'
                         }`}>
                         {(course.progressPercentage || 0) === 100
                           ? 'Completed'

@@ -20,6 +20,36 @@ export default function ViewCourse() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Function to restore state from localStorage
+  const restoreFromLocalStorage = () => {
+    try {
+      const cachedData = localStorage.getItem(`course_${courseId}`)
+      if (cachedData) {
+        const parsedData = JSON.parse(cachedData)
+        console.log("Restoring from localStorage:", parsedData)
+
+        // Restore all the state from localStorage
+        if (parsedData.courseContent) {
+          dispatch(setCourseSectionData(parsedData.courseContent))
+        }
+        if (parsedData.courseDetails) {
+          dispatch(setEntireCourseData(parsedData.courseDetails))
+        }
+        if (parsedData.completedVideos) {
+          dispatch(setCompletedLectures(parsedData.completedVideos))
+        }
+        if (parsedData.totalLectures) {
+          dispatch(setTotalNoOfLectures(parsedData.totalLectures))
+        }
+
+        return true // Successfully restored
+      }
+    } catch (error) {
+      console.error("Error restoring from localStorage:", error)
+    }
+    return false
+  }
+
   // Load course data on component mount and whenever courseId or token changes
   useEffect(() => {
     const loadCourseData = async () => {
@@ -33,7 +63,13 @@ export default function ViewCourse() {
         setIsLoading(true)
         setError(null)
 
-        console.log("Fetching course data for courseId:", courseId)
+        // First, try to restore from localStorage for immediate UI feedback
+        const restoredFromCache = restoreFromLocalStorage()
+        if (restoredFromCache) {
+          setIsLoading(false) // Show cached data immediately
+        }
+
+        console.log("Fetching fresh course data for courseId:", courseId)
         const response = await getCompleteCourseDetails(courseId, token)
 
         console.log("Full API Response:", response)
@@ -57,7 +93,7 @@ export default function ViewCourse() {
         }
 
         console.log("Processed courseDetails:", courseDetails)
-        console.log("Completed videos:", completedVideos)
+        console.log("Completed videos from API:", completedVideos)
 
         if (!courseDetails) {
           throw new Error("Course details not found in API response")
@@ -75,10 +111,27 @@ export default function ViewCourse() {
 
         console.log("Course content:", courseContent)
 
-        // Dispatch actions to update Redux state
+        // Get existing completed videos from localStorage and merge with API data
+        let finalCompletedVideos = completedVideos
+        try {
+          const cachedData = localStorage.getItem(`course_${courseId}`)
+          if (cachedData) {
+            const parsedData = JSON.parse(cachedData)
+            const localCompletedVideos = parsedData.completedVideos || []
+
+            // Merge local and API completed videos (remove duplicates)
+            const mergedCompleted = [...new Set([...completedVideos, ...localCompletedVideos])]
+            finalCompletedVideos = mergedCompleted
+            console.log("Merged completed videos:", finalCompletedVideos)
+          }
+        } catch (mergeError) {
+          console.error("Error merging completed videos:", mergeError)
+        }
+
+        // Dispatch actions to update Redux state with fresh data
         dispatch(setCourseSectionData(courseContent))
         dispatch(setEntireCourseData(courseDetails))
-        dispatch(setCompletedLectures(completedVideos))
+        dispatch(setCompletedLectures(finalCompletedVideos))
 
         // Calculate total lectures
         let lectures = 0
@@ -95,11 +148,11 @@ export default function ViewCourse() {
         console.log("Total lectures calculated:", lectures)
         dispatch(setTotalNoOfLectures(lectures))
 
-        // Store the course data in localStorage as backup
+        // Update localStorage with fresh data
         const courseData = {
           courseContent,
           courseDetails,
-          completedVideos,
+          completedVideos: finalCompletedVideos,
           totalLectures: lectures,
           timestamp: Date.now()
         }
@@ -109,23 +162,11 @@ export default function ViewCourse() {
         console.error("Error loading course data:", error)
         setError(error.message || "Failed to load course data")
 
-        // Try to load from localStorage as fallback
-        try {
-          const cachedData = localStorage.getItem(`course_${courseId}`)
-          if (cachedData) {
-            const parsedData = JSON.parse(cachedData)
-            // Only use cached data if it's less than 1 hour old
-            if (Date.now() - parsedData.timestamp < 3600000) {
-              console.log("Loading course data from cache")
-              dispatch(setCourseSectionData(parsedData.courseContent))
-              dispatch(setEntireCourseData(parsedData.courseDetails))
-              dispatch(setCompletedLectures(parsedData.completedVideos))
-              dispatch(setTotalNoOfLectures(parsedData.totalLectures))
-              setError(null)
-            }
-          }
-        } catch (cacheError) {
-          console.error("Error loading from cache:", cacheError)
+        // If API fails and we haven't already restored from cache, try now
+        if (!restoreFromLocalStorage()) {
+          setError("Failed to load course data and no cached data available")
+        } else {
+          setError(null) // Clear error if we successfully restored from cache
         }
       } finally {
         setIsLoading(false)

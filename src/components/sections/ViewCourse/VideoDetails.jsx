@@ -29,6 +29,30 @@ const VideoDetails = () => {
   const [watched, setWatched] = useState(0)
   const [isDataLoading, setIsDataLoading] = useState(true)
 
+  // Function to update localStorage with completed lectures
+  const updateLocalStorage = (newCompletedLectures) => {
+    try {
+      const existingData = localStorage.getItem(`course_${courseId}`)
+      if (existingData) {
+        const courseData = JSON.parse(existingData)
+        courseData.completedVideos = newCompletedLectures
+        courseData.timestamp = Date.now()
+        localStorage.setItem(`course_${courseId}`, JSON.stringify(courseData))
+        console.log("Updated localStorage with completed lectures:", newCompletedLectures)
+      } else {
+        // Create new localStorage entry if it doesn't exist
+        const courseData = {
+          completedVideos: newCompletedLectures,
+          timestamp: Date.now()
+        }
+        localStorage.setItem(`course_${courseId}`, JSON.stringify(courseData))
+        console.log("Created new localStorage entry with completed lectures:", newCompletedLectures)
+      }
+    } catch (storageError) {
+      console.error("Error updating localStorage:", storageError)
+    }
+  }
+
   // Wait for course data to be loaded before proceeding
   useEffect(() => {
     if (courseSectionData && courseSectionData.length > 0) {
@@ -58,7 +82,7 @@ const VideoDetails = () => {
         if (filteredData.length > 0) {
           // Handle both subSections and subSection property names
           const subSections = filteredData[0].subSections || filteredData[0].subSection || []
-          
+
           if (subSections.length > 0) {
             const filteredVideoData = subSections.filter(
               (data) => data._id === subSectionId
@@ -106,8 +130,8 @@ const VideoDetails = () => {
       return false
     }
 
-    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
-                       courseSectionData[currentSectionIndx]?.subSection || []
+    const subSections = courseSectionData[currentSectionIndx]?.subSections ||
+      courseSectionData[currentSectionIndx]?.subSection || []
 
     if (subSections.length === 0) {
       return false
@@ -129,8 +153,8 @@ const VideoDetails = () => {
 
     if (currentSectionIndx === -1) return
 
-    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
-                       courseSectionData[currentSectionIndx]?.subSection || []
+    const subSections = courseSectionData[currentSectionIndx]?.subSections ||
+      courseSectionData[currentSectionIndx]?.subSection || []
 
     if (subSections.length === 0) return
 
@@ -150,7 +174,7 @@ const VideoDetails = () => {
       if (currentSectionIndx + 1 < courseSectionData.length) {
         const nextSection = courseSectionData[currentSectionIndx + 1]
         const nextSectionSubSections = nextSection?.subSections || nextSection?.subSection || []
-        
+
         if (nextSectionSubSections.length > 0) {
           const nextSectionId = nextSection._id
           const nextSubSectionId = nextSectionSubSections[0]._id
@@ -175,8 +199,8 @@ const VideoDetails = () => {
       return false
     }
 
-    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
-                       courseSectionData[currentSectionIndx]?.subSection || []
+    const subSections = courseSectionData[currentSectionIndx]?.subSections ||
+      courseSectionData[currentSectionIndx]?.subSection || []
 
     if (subSections.length === 0) {
       return false
@@ -202,8 +226,8 @@ const VideoDetails = () => {
 
     if (currentSectionIndx === -1) return
 
-    const subSections = courseSectionData[currentSectionIndx]?.subSections || 
-                       courseSectionData[currentSectionIndx]?.subSection || []
+    const subSections = courseSectionData[currentSectionIndx]?.subSections ||
+      courseSectionData[currentSectionIndx]?.subSection || []
 
     if (subSections.length === 0) return
 
@@ -222,7 +246,7 @@ const VideoDetails = () => {
       if (currentSectionIndx - 1 >= 0) {
         const prevSection = courseSectionData[currentSectionIndx - 1]
         const prevSectionSubSections = prevSection?.subSections || prevSection?.subSection || []
-        
+
         if (prevSectionSubSections.length > 0) {
           const prevSectionId = prevSection._id
           const prevSubSectionLength = prevSectionSubSections.length
@@ -236,32 +260,38 @@ const VideoDetails = () => {
   }
 
   const handleLectureCompletion = async () => {
-    console.log("Token from Redux:", token); 
+    console.log("Token from Redux:", token);
     setLoading(true)
+
     try {
+      // Optimistically update the UI first
+      const newCompletedLectures = [...(completedLectures || []), subSectionId]
+      const uniqueCompletedLectures = [...new Set(newCompletedLectures)]
+
+      // Update Redux state immediately
+      dispatch(updateCompletedLectures(subSectionId))
+
+      // Update localStorage immediately
+      updateLocalStorage(uniqueCompletedLectures)
+
+      // Then make the API call
       const res = await markLectureAsComplete(
         { courseId: courseId, subSectionId: subSectionId },
         token
       )
-      if (res) {
-        dispatch(updateCompletedLectures(subSectionId))
-        
-        // Also update localStorage for persistence
-        try {
-          const existingData = localStorage.getItem(`course_${courseId}`)
-          if (existingData) {
-            const courseData = JSON.parse(existingData)
-            const updatedCompletedVideos = [...(courseData.completedVideos || []), subSectionId]
-            courseData.completedVideos = [...new Set(updatedCompletedVideos)] // Remove duplicates
-            courseData.timestamp = Date.now()
-            localStorage.setItem(`course_${courseId}`, JSON.stringify(courseData))
-          }
-        } catch (storageError) {
-          console.error("Error updating localStorage:", storageError)
-        }
+
+      if (!res) {
+        // If API call fails, we still keep the local update
+        // but you might want to show a warning that it will sync later
+        console.warn("API call failed, but lecture marked as complete locally")
+      } else {
+        console.log("Lecture marked as complete successfully in API")
       }
+
     } catch (error) {
       console.error("Error marking lecture as complete:", error)
+      // Even if API fails, we keep the local update
+      // You could implement a retry mechanism here
     } finally {
       setLoading(false)
     }
