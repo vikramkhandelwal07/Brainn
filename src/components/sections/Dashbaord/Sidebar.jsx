@@ -64,13 +64,13 @@ export default function Sidebar() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobileView(window.innerWidth < 768)
-      if (window.innerWidth >= 768) {
+      setIsMobileView(window.innerWidth < 1058)
+      if (window.innerWidth >= 1058) {
         setIsMobileSidebarOpen(false)
       }
     }
 
-    handleResize() // Set initial value
+    handleResize() 
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
