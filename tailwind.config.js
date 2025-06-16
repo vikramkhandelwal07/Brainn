@@ -16,6 +16,7 @@ export default {
         "float-delay": "float 6s ease-in-out infinite 2s",
         "float-delay-long": "float 6s ease-in-out infinite 4s",
         glow: "glow 2s ease-in-out infinite alternate",
+        shimmer: "shimmer 3s ease infinite",
       },
       keyframes: {
         "pulse-slow": {
@@ -54,6 +55,36 @@ export default {
               "0 0 10px rgba(139, 92, 246, 0.6), 0 0 20px rgba(139, 92, 246, 0.4), 0 0 30px rgba(139, 92, 246, 0.2)",
           },
         },
+        shimmer: {
+          "0%": {
+            backgroundPosition: "0% 50%",
+          },
+          "50%": {
+            backgroundPosition: "100% 50%",
+          },
+          "100%": {
+            backgroundPosition: "0% 50%",
+          },
+        },
+        "gold-shimmer": {
+          "0%, 100%": {
+            "background-position": "0% 50%",
+            filter: "drop-shadow(0 0 8px rgba(212, 175, 55, 0.7))",
+          },
+          "50%": {
+            "background-position": "100% 50%",
+            filter: "drop-shadow(0 0 12px rgba(255, 215, 0, 0.9))",
+          },
+        },
+        "gold-pulse": {
+          "0%, 100%": {
+            opacity: "0.9",
+          },
+          "50%": {
+            opacity: "1",
+            "text-shadow": "0 0 15px rgba(255, 215, 0, 0.8)",
+          },
+        },
       },
       backdropBlur: {
         xs: "2px",
@@ -62,6 +93,19 @@ export default {
         glass: {
           light: "rgba(255, 255, 255, 0.1)",
           dark: "rgba(0, 0, 0, 0.1)",
+        },
+        gold: {
+          100: "#FFF9C4",
+          200: "#FFEE58",
+          300: "#FFD54F",
+          400: "#FFC107",
+          500: "#FFB300", // Standard gold
+          600: "#FFA000",
+          700: "#FF8F00",
+          800: "#FF6F00",
+          900: "#FF5722",
+          light: "#FFD700", // Bright gold
+          dark: "#D4AF37", // Metallic gold
         },
       },
       backgroundImage: {

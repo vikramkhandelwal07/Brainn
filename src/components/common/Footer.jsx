@@ -218,11 +218,12 @@ const Footer = () => {
             <div className="text-gray-400 text-sm">
               Made with ❤️ © {new Date().getFullYear()} Brainn
             </div>
-            
+
           </div>
           <div className="w-full bg-gray-950 text-center">
-            <h1 className="text-6xl md:text-8xl lg:text-[20rem] font-black">
-              <span className="bg-gradient-to-t from-black via-pink-950 to-violet-600 bg-clip-text text-transparent font-poppins">
+            <h1 className="text-6xl md:text-[10rem] lg:text-[16rem] font-black ">
+              <span className="bg-gradient-to-t from-orange-500 via-yellow-400 via-40% to-yellow-200 bg-clip-text text-transparent font-poppins drop-shadow-[0_0_4px_rgba(234,179,8,0.7)] animate-shimmer
+    ">
                 Brainn
               </span>
             </h1>

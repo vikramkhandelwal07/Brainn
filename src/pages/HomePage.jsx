@@ -14,7 +14,7 @@ import { BeamsBackground } from '../components/ui/beams-background';
 
 const HomePage = () => {
   return (
-    <div className=''>
+    <div className='w-full overflow-x-hidden'>
       {/* ----------- section 1 ----------- */}
       <div className="bg-black min-h-screen w-full relative overflow-hidden">
         {/* ----------- Large Screens Content with Spline ----------- */}
@@ -22,7 +22,7 @@ const HomePage = () => {
           <h1
             className="
               absolute top-32 left-1/2 transform -translate-x-1/2 
-              font-poppins text-7xl text-center whitespace-nowrap font-semibold
+              font-poppins text-5xl lg:text-7xl text-center whitespace-nowrap font-semibold
               bg-gradient-to-r from-white via-violet-500 to-white 
               bg-clip-text text-transparent
             "
@@ -89,54 +89,54 @@ const HomePage = () => {
               Register as Student <FiArrowRight className="text-xl" />
             </HoverButton>
           </Link>
-
-          <div className="bg-black absolute top-64 z-10 left-full h-96 w-[40rem]"></div>
         </div>
       </div>
 
       {/* ----------- Intersection Cards ----------- */}
-      <div className="relative">
-        <div className=" absolute w-full -top-16 sm:-top-20 lg:-top-32 left-0 flex flex-col lg:flex-row justify-center items-center gap-3 lg:gap-8 z-10 px-4">
-          {/* Explore Courses Card */}
-          <div className="w-full max-w-sm lg:w-[30rem] h-[10rem] lg:h-[14rem] rounded-xl lg:rounded-2xl bg-white/10 backdrop-blur-md shadow-lg border border-white/20 flex flex-col items-center justify-center text-white p-3 lg:p-4 transition-all hover:scale-[1.03] duration-300">
-            <FaBookOpen className="text-3xl lg:text-4xl text-white mb-2 lg:mb-3" />
-            <h2 className="text-xl lg:text-2xl font-semibold mb-1">Explore Courses</h2>
-            <p className="text-center text-xs lg:text-sm mb-2 lg:mb-3">
-              Dive into trending topics across design, tech, and innovation. Learn at your pace.
-            </p>
-            <button className="mt-auto text-xs lg:text-sm text-white/80 underline hover:text-white">
-              Browse Catalog →
-            </button>
-          </div>
+      <div className="relative bg-black pb-16 sm:pb-20 lg:pb-32 mt-20">
+        <div className="container mx-auto px-4">
+          <div className="w-full flex flex-col lg:flex-row justify-center items-center gap-4 lg:gap-8 -mt-16 sm:-mt-20 lg:-mt-32 z-10">
+            {/* Explore Courses Card */}
+            <div className="w-full lg:w-[30rem] h-[10rem] lg:h-[14rem] rounded-xl lg:rounded-2xl bg-white/10 backdrop-blur-md shadow-lg border border-white/20 flex flex-col items-center justify-center text-white p-3 lg:p-4 transition-all hover:scale-[1.03] duration-300">
+              <FaBookOpen className="text-3xl lg:text-4xl text-white mb-2 lg:mb-3" />
+              <h2 className="text-xl lg:text-2xl font-semibold mb-1">Explore Courses</h2>
+              <p className="text-center text-xs lg:text-sm mb-2 lg:mb-3">
+                Dive into trending topics across design, tech, and innovation. Learn at your pace.
+              </p>
+              <button className="mt-auto text-xs lg:text-sm text-white/80 underline hover:text-white">
+                Browse Catalog →
+              </button>
+            </div>
 
-          {/* Start Teaching Card */}
-          <div className="w-full max-w-sm lg:w-[30rem] h-[10rem] lg:h-[14rem] rounded-xl lg:rounded-2xl bg-white/10 backdrop-blur-md shadow-lg border border-white/20 flex flex-col items-center justify-center text-white p-3 lg:p-4 transition-all hover:scale-[1.03] duration-300">
-            <FaChalkboardTeacher className="text-3xl lg:text-4xl text-white mb-2 lg:mb-3" />
-            <h2 className="text-xl lg:text-2xl font-semibold mb-1">Start Teaching</h2>
-            <p className="text-center text-xs lg:text-sm mb-2 lg:mb-3">
-              Share your knowledge with the world. Create impactful courses in minutes.
-            </p>
-            <button className="mt-auto text-xs lg:text-sm text-white/80 underline hover:text-white">
-              Become an Instructor →
-            </button>
-          </div>
+            {/* Start Teaching Card */}
+            <div className="w-full lg:w-[30rem] h-[10rem] lg:h-[14rem] rounded-xl lg:rounded-2xl bg-white/10 backdrop-blur-md shadow-lg border border-white/20 flex flex-col items-center justify-center text-white p-3 lg:p-4 transition-all hover:scale-[1.03] duration-300">
+              <FaChalkboardTeacher className="text-3xl lg:text-4xl text-white mb-2 lg:mb-3" />
+              <h2 className="text-xl lg:text-2xl font-semibold mb-1">Start Teaching</h2>
+              <p className="text-center text-xs lg:text-sm mb-2 lg:mb-3">
+                Share your knowledge with the world. Create impactful courses in minutes.
+              </p>
+              <button className="mt-auto text-xs lg:text-sm text-white/80 underline hover:text-white">
+                Become an Instructor →
+              </button>
+            </div>
 
-          {/* Join as Learner Card */}
-          <div className="w-full max-w-sm lg:w-[30rem] h-[10rem] lg:h-[14rem] rounded-xl lg:rounded-2xl bg-white/10 backdrop-blur-md shadow-lg border border-white/20 flex flex-col items-center justify-center text-white p-3 lg:p-4 transition-all hover:scale-[1.03] duration-300">
-            <PiStudentBold className="text-3xl lg:text-4xl text-white mb-2 lg:mb-3" />
-            <h2 className="text-xl lg:text-2xl font-semibold mb-1">Join as Learner</h2>
-            <p className="text-center text-xs lg:text-sm mb-2 lg:mb-3">
-              Begin your learning journey with curated, expert-led lessons tailored for you.
-            </p>
-            <button className="mt-auto text-xs lg:text-sm text-white/80 underline hover:text-white">
-              Sign Up →
-            </button>
+            {/* Join as Learner Card */}
+            <div className="w-full lg:w-[30rem] h-[10rem] lg:h-[14rem] rounded-xl lg:rounded-2xl bg-white/10 backdrop-blur-md shadow-lg border border-white/20 flex flex-col items-center justify-center text-white p-3 lg:p-4 transition-all hover:scale-[1.03] duration-300">
+              <PiStudentBold className="text-3xl lg:text-4xl text-white mb-2 lg:mb-3" />
+              <h2 className="text-xl lg:text-2xl font-semibold mb-1">Join as Learner</h2>
+              <p className="text-center text-xs lg:text-sm mb-2 lg:mb-3">
+                Begin your learning journey with curated, expert-led lessons tailored for you.
+              </p>
+              <button className="mt-auto text-xs lg:text-sm text-white/80 underline hover:text-white">
+                Sign Up →
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ----------- section 2 ----------- */}
-      <div className="bg-black h-screen w-full relative overflow-hidden ">
+      <div className="bg-black h-screen w-full relative overflow-hidden">
         <div className="flex w-full h-screen justify-center items-center">
           <Component
             color="rgba(128, 128, 128, 1)"
@@ -149,11 +149,11 @@ const HomePage = () => {
 
       {/* ----------- section 3 ----------- */}
       <div className="bg-gray-200 min-h-screen w-full relative overflow-hidden">
-        <div className="mx-auto flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8">
+        <div className="container mx-auto px-4 py-20 lg:py-0 flex flex-col items-center justify-between gap-8">
 
           {/* Job that is in Demand - Section 1 */}
-          <div className="mb-10 mt-40 sm:mt-48 lg:mt-20 flex flex-col justify-between gap-7 lg:flex-row lg:gap-0 px-4">
-            <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold lg:w-[45%] lg:ml-20 text-center lg:text-left">
+          <div className="mb-10 mt-10 lg:mt-20 flex flex-col justify-between gap-7 lg:flex-row lg:gap-0">
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold lg:w-[45%] text-center lg:text-left">
               Get the skills you need for a{" "}
               <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-transparent bg-clip-text">
                 job that is in demand.
@@ -188,7 +188,7 @@ const HomePage = () => {
       {/* ---------section 4 --------------- */}
       <div className="relative min-h-screen w-full bg-black overflow-hidden py-12 lg:py-0">
         <BeamsBackground intensity="strong" />
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-white px-4">
+        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center min-h-screen text-white">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center">Categories</h2>
           <p className="text-center max-w-2xl text-white/80 text-base lg:text-lg mb-8">
             Explore our curated set of categories designed to help you navigate through the content with ease.
@@ -201,7 +201,7 @@ const HomePage = () => {
 
       {/* ----------- section 5 community ----------- */}
       <div className="bg-black min-h-screen w-full relative overflow-hidden">
-        <div className='mx-auto flex items-center max-w-maxContent h-full'>
+        <div className='container mx-auto flex items-center h-full'>
           <AnimationCommunity />
           <div className='mx-auto w-full absolute bottom-0 h-14 bg-black' />
         </div>
