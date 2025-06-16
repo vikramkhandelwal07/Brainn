@@ -64,8 +64,8 @@ export default function Sidebar() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobileView(window.innerWidth < 1058)
-      if (window.innerWidth >= 1058) {
+      setIsMobileView(window.innerWidth < 768)
+      if (window.innerWidth >= 768) {
         setIsMobileSidebarOpen(false)
       }
     }
@@ -82,7 +82,7 @@ export default function Sidebar() {
   if (profileLoading || authLoading) {
     return (
       <div className="flex h-[calc(100vh-3.5rem)] min-w-[280px] sm:min-w-[220px] items-center justify-center border-r border-gray-800/50 bg-gradient-to-b from-gray-900 to-gray-950 backdrop-blur-xl">
-        <div className="relative">
+        <div className="relative ">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500/20 border-t-blue-500"></div>
           <div className="absolute inset-0 h-8 w-8 animate-pulse rounded-full bg-blue-500/10"></div>
         </div>
@@ -106,7 +106,7 @@ export default function Sidebar() {
 
   // Sidebar content component
   const SidebarContent = () => (
-    <div className="flex h-screen w-full min-w-[280px] sm:min-w-[220px] md:min-w-[200px] lg:min-w-[280px] flex-col border-r border-gray-800/50 bg-gradient-to-b from-black to-indigo-950 via-black backdrop-blur-xl shadow-2xl md:sticky md:top-0">
+    <div className="flex h-full w-[200px] min-w-[280px] sm:min-w-[220px] md:min-w-[200px] lg:min-w-[280px] flex-col border-r border-gray-800/50 bg-gradient-to-b from-black to-indigo-950 via-black backdrop-blur-xl shadow-2xl">
       {/* Header Section */}
       <div className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 p-3 sm:p-4 backdrop-blur-sm border border-gray-700/50">
@@ -190,12 +190,12 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop Sidebar (always visible) */}
+      {/* Desktop Sidebar (always visible on md and above) */}
       <div className="hidden md:block">
         <SidebarContent />
       </div>
 
-      {/* Mobile Sidebar (conditionally rendered) */}
+      {/* Mobile Sidebar (only when toggled open) */}
       {isMobileView && (
         <>
           {/* Overlay when sidebar is open */}
@@ -208,13 +208,14 @@ export default function Sidebar() {
 
           {/* Mobile sidebar */}
           <div
-            className={`fixed inset-y-0 left-0 z-30 transform ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
-              } transition-transform duration-300 ease-in-out md:hidden`}
+            className={`fixed inset-y-0 left-0 z-30 transform ${
+              isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } transition-transform duration-300 ease-in-out md:hidden`}
           >
             <SidebarContent />
           </div>
 
-          {/* Mobile toggle button */}
+          {/* Mobile toggle button (always visible on mobile) */}
           <MobileToggleButton />
         </>
       )}

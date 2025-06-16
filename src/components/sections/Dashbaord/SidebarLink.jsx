@@ -20,7 +20,7 @@ export default function SidebarLink({ link, iconName, className = "", isCollapse
     <NavLink
       to={link.path}
       onClick={() => dispatch(resetCourseState())}
-      title={isCollapsed ? link.name : ""} // Show tooltip when collapsed
+      title={isCollapsed ? link.name : ""} 
       className={({ isActive: navLinkActive }) => {
         const baseClasses = "relative flex items-center transition-all duration-200 group"
         const activeClasses = (isActive || navLinkActive)
