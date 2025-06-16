@@ -22,7 +22,6 @@ export default function ChangeProfilePicture() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
-    // console.log(file)
     if (file) {
       setImageFile(file)
       previewFile(file)
@@ -43,7 +42,6 @@ export default function ChangeProfilePicture() {
       setLoading(true)
       const formData = new FormData()
       formData.append("displayPicture", imageFile)
-      // console.log("formdata", formData)
       dispatch(updateDisplayPicture(token, formData)).then(() => {
         setLoading(false)
       })
@@ -59,19 +57,19 @@ export default function ChangeProfilePicture() {
   }, [imageFile])
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-gray-600/50 bg-gradient-to-br from-black via-gray-700 to-gray-600 p-8 shadow-xl backdrop-blur-sm">
+    <div className="relative overflow-hidden rounded-lg sm:rounded-xl border border-gray-600/50 bg-gradient-to-br from-black via-gray-700 to-gray-600 p-4 sm:p-6 md:p-8 shadow-lg sm:shadow-xl backdrop-blur-sm">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5"></div>
 
       <div className="relative z-10">
         {/* Header */}
-        <div className="mb-6 text-center">
-          <h3 className="text-3xl font-poppins font-semibold text-white mb-2">Profile Picture</h3>
-          <p className="text-gray-400 text-sm">Upload a new photo to personalize your account</p>
+        <div className="mb-4 sm:mb-6 text-center">
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-poppins font-semibold text-white mb-1 sm:mb-2">Profile Picture</h3>
+          <p className="text-gray-400 text-xs sm:text-sm">Upload a new photo to personalize your account</p>
         </div>
 
         {/* Profile Image Section */}
-        <div className="flex flex-col items-center space-y-6">
+        <div className="flex flex-col items-center space-y-4 sm:space-y-6">
           {/* Image Container with Hover Effect */}
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
@@ -79,17 +77,17 @@ export default function ChangeProfilePicture() {
               <img
                 src={previewSource || user?.image}
                 alt={`profile-${user?.firstName}`}
-                className="w-32 h-32 rounded-full object-cover border-4 border-gray-600 shadow-lg transition-transform duration-300 group-hover:scale-105"
+                className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-2 sm:border-3 md:border-4 border-gray-600 shadow-md sm:shadow-lg transition-transform duration-300 group-hover:scale-105"
               />
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <span className="text-white text-sm font-medium">Change Photo</span>
+                <span className="text-white text-xs sm:text-sm font-medium">Change Photo</span>
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+          <div className="flex flex-row sm:flex-row gap-3 sm:gap-4 w-full max-w-xs sm:max-w-md">
             <input
               type="file"
               ref={fileInputRef}
@@ -101,7 +99,7 @@ export default function ChangeProfilePicture() {
             <button
               onClick={handleClick}
               disabled={loading}
-              className="flex-1 group relative overflow-hidden rounded-lg border-2 border-white bg-transparent hover:bg-gray-600 transition-all duration-300 py-3 px-6 font-medium text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="flex-1 group relative overflow-hidden rounded-md sm:rounded-lg border border-white sm:border-2 bg-transparent hover:bg-gray-600 transition-all duration-300 py-2 sm:py-3 px-4 sm:px-6 text-xs sm:text-sm font-medium text-white shadow-md hover:shadow-lg sm:hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               <span className="relative z-10">Choose File</span>
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -111,11 +109,11 @@ export default function ChangeProfilePicture() {
               <IconButton
                 text={loading ? "Uploading..." : "Upload"}
                 onclick={handleFileUpload}
-                size="lg"
+                size="sm:md md:lg"
                 variant="primary"
               >
                 {!loading && (
-                  <FiUpload className="text-lg text-gray-900" />
+                  <FiUpload className="text-sm sm:text-base md:text-lg text-gray-900" />
                 )}
               </IconButton>
             </div>
@@ -123,11 +121,11 @@ export default function ChangeProfilePicture() {
 
           {/* File Info */}
           {imageFile && (
-            <div className="text-center">
-              <p className="text-sm text-gray-300">
+            <div className="text-center max-w-xs">
+              <p className="text-xs sm:text-sm text-gray-300 truncate">
                 Selected: <span className="font-medium text-white">{imageFile.name}</span>
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xxs sm:text-xs text-gray-500 mt-1">
                 Size: {(imageFile.size / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
@@ -136,15 +134,15 @@ export default function ChangeProfilePicture() {
           {/* Loading Indicator */}
           {loading && (
             <div className="flex items-center space-x-2 text-blue-400">
-              <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-sm">Processing your image...</span>
+              <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-xs sm:text-sm">Processing your image...</span>
             </div>
           )}
         </div>
 
         {/* Footer Note */}
-        <div className="mt-8 text-center">
-          <p className="text-xs text-gray-500">
+        <div className="mt-4 sm:mt-6 md:mt-8 text-center">
+          <p className="text-xxs sm:text-xs text-gray-500">
             Supported formats: PNG, JPEG, GIF • Max size: 5MB
           </p>
         </div>

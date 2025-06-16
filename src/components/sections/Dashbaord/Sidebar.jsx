@@ -64,7 +64,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobileView(window.innerWidth < 768) // Adjust breakpoint as needed
+      setIsMobileView(window.innerWidth < 768)
       if (window.innerWidth >= 768) {
         setIsMobileSidebarOpen(false)
       }
@@ -106,7 +106,7 @@ export default function Sidebar() {
 
   // Sidebar content component
   const SidebarContent = () => (
-    <div className="flex h-screen w-full min-w-[280px] sm:min-w-[220px] md:min-w-[240px] lg:min-w-[280px] flex-col border-r border-gray-800/50 bg-gradient-to-b from-black to-indigo-950 via-black backdrop-blur-xl shadow-2xl md:sticky md:top-0">
+    <div className="flex h-screen w-full min-w-[280px] sm:min-w-[220px] md:min-w-[200px] lg:min-w-[280px] flex-col border-r border-gray-800/50 bg-gradient-to-b from-black to-indigo-950 via-black backdrop-blur-xl shadow-2xl md:sticky md:top-0">
       {/* Header Section */}
       <div className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 p-3 sm:p-4 backdrop-blur-sm border border-gray-700/50">
