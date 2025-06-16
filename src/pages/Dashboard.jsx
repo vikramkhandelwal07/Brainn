@@ -63,7 +63,7 @@ function Dashboard() {
             {/* Content Wrapper with Glass Effect */}
             <div className="relative">
               {/* Subtle Background Card */}
-              <div className="absolute inset-0 rounded-2xl bg-black backdrop-blur-sm border border-white/10 shadow-2xl"></div>
+              <div className="absolute inset-0 rounded-2xl bg-black backdrop-blur-sm shadow-2xl"></div>
 
               {/* Main Content */}
               <div className="relative rounded-2xl p-6 sm:p-8 lg:p-10">

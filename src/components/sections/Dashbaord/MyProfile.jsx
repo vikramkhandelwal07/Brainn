@@ -11,7 +11,7 @@ export default function MyProfile() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-gradient-to-tl from-gray-700 via-gray-700 to-gray-600 p-3 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-tl from-gray-700 via-gray-700 to-gray-600 p-3 sm:p-6 relative overflow-hidden rounded-2xl">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-3xl animate-pulse"></div>

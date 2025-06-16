@@ -89,7 +89,7 @@ export default function MyEnrolledCourses() {
   }, [enrolledCourses, loading, error, token])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 rounded-2xl">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
         <div className="mb-8 text-center">
