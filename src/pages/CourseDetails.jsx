@@ -32,7 +32,7 @@ function CourseDetails() {
 
   const [response, setResponse] = useState(null)
   const [courseLoading, setCourseLoading] = useState(true)
-  const [confirmationModal, setConfirmationModal] = useState(null) // Fixed naming conflict
+  const [confirmationModal, setConfirmationModal] = useState(null)
   const [isActive, setIsActive] = useState([])
   const [fetchError, setFetchError] = useState(null)
 
@@ -191,7 +191,7 @@ function CourseDetails() {
   console.log("response", response)
 
   const avgReviewCount = useMemo(() => {
-    const reviews = response?.data?.ratingAndReviews || []; // Corrected path
+    const reviews = response?.data?.ratingAndReviews || [];
     return GetAverageRating(reviews);
   }, [response?.data?.ratingAndReviews]);
 
@@ -217,15 +217,13 @@ function CourseDetails() {
       return `${Math.floor(seconds)}s`;
     }
   };
-  
+
   const totalNoOfLectures = useMemo(() => {
-    const content = response?.data?.courseContent || []; 
+    const content = response?.data?.courseContent || [];
     return content.reduce((total, section) => {
       return total + (section.subSections?.length || 0);
     }, 0);
   }, [response?.data?.courseContent]);
-
-  
 
   const handleCollapseAll = () => {
     setIsActive([])
@@ -282,9 +280,9 @@ function CourseDetails() {
     }, 0);
     return total + sectionDuration;
   }, 0);
-  
+
   const instructorName = `${instructor?.firstName || ""} ${instructor?.lastName || ""}`.trim()
-  
+
   const handleBuyCourse = () => {
     if (token) {
       buyCourse(token, [courseId], user, navigate, dispatch)
@@ -316,152 +314,176 @@ function CourseDetails() {
 
   return (
     <>
-      <div className={`relative w-full bg-gradient-to-tr from-gray-950 ${adaptiveGradientColor} to-black text-gray-100`}>
-        {/* Hero Section */}
-        <div className="mx-auto box-content px-4 lg:container lg:px-6 2xl:relative">
-          <div className="mx-auto grid min-h-[450px] justify-items-center py-8 lg:mx-0 lg:grid-cols-2 lg:justify-items-start lg:py-12 lg:gap-8 xl:gap-12">
+      {/* Hero Section with improved responsive design */}
+      <div className={`relative w-full bg-gradient-to-br from-gray-950 ${adaptiveGradientColor} to-black text-gray-100`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 py-8 lg:py-16 min-h-[500px] lg:min-h-[600px]">
 
-            {/* Mobile Thumbnail - Hidden on desktop */}
-            {/* <div className="relative w-full lg:hidden">
-              <div className="absolute bottom-0 left-0 h-full w-full shadow-[#161D29_0px_-64px_36px_-28px_inset]"></div>
-              {thumbnail ? (
-                <img
-                  src={thumbnail}
-                  alt="course thumbnail"
-                  className="aspect-video w-full rounded-lg object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="aspect-video w-full rounded-lg bg-gray-700 flex items-center justify-center">
-                  <span className="text-gray-400">No thumbnail available</span>
-                </div>
-              )}
-            </div> */}
-
-            {/* Course Info */}
-            <div className="z-30 my-5 flex w-full flex-col justify-center gap-4 py-5 text-base sm:text-xl lg:max-w-[800px] ">
-              <div>
-                <h1 className="text-3xl font-bold text-white sm:text-4xl md:text-5xl lg:text-[8xl] leading-tight lg:mt-[-30%]">
+            {/* Course Info - Better spacing and typography scaling */}
+            <div className="flex flex-col justify-center space-y-4 sm:space-y-6 lg:space-y-8 order-2 lg:order-1">
+              <div className="space-y-3 sm:space-y-4">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
                   {courseName}
                 </h1>
+                <p className="text-sm sm:text-base lg:text-lg text-gray-200 leading-relaxed max-w-2xl">
+                  {courseDescription}
+                </p>
               </div>
 
-              <p className="text-sm text-gray-200 leading-relaxed sm:text-base lg:mt-[-20%]">
-                {courseDescription}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base ">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm sm:text-base">
                 <span className="text-yellow-25 font-semibold">{avgReviewCount}</span>
                 <RatingStars Review_Count={avgReviewCount} Star_Size={20} />
                 <span className="text-gray-300">({ratingAndReviews.length} reviews)</span>
+                <span className="text-gray-300">•</span>
                 <span className="text-gray-300">{studentsEnrolled.length} students</span>
               </div>
 
-              <div className="flex flex-row flex-wrap gap-2 items-center text-sm sm:text-base">
-                <p className="text-gray-300">Created By: </p>
-                <p className="font-semibold text-white">{instructorName}</p>
+              <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base">
+                <span className="text-gray-300">Created by:</span>
+                <span className="font-semibold text-white">{instructorName}</span>
               </div>
 
-              <div className="flex flex-wrap gap-3 text-sm sm:text-base text-gray-300">
-                <p className="flex items-center gap-2">
-                  <BiInfoCircle className="text-blue-400" />
-                  {createdAt ? formatDate(createdAt) : "Date not available"}
-                </p>
-                <p className="flex items-center gap-2">
-                  <HiOutlineGlobeAlt className="text-green-400" />
-                  English
-                </p>
+              <div className="flex flex-wrap gap-4 sm:gap-6 text-sm sm:text-base text-gray-300">
+                <div className="flex items-center gap-2">
+                  <BiInfoCircle className="text-blue-400 flex-shrink-0" />
+                  <span>{createdAt ? formatDate(createdAt) : "Date not available"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <HiOutlineGlobeAlt className="text-green-400 flex-shrink-0" />
+                  <span>English</span>
+                </div>
               </div>
             </div>
 
-            {/* Desktop Course Card - Positioned differently on mobile */}
-            <div className="w-full lg:sticky lg:top-24 lg:self-start lg:translate-y-12 ">
-              <CourseDetailsCard
-                course={courseDetails}
-                setConfirmation={setConfirmationModal}
-                handleBuyCourse={handleBuyCourse}
-              />
+            {/* Course Card - Better positioning and sizing */}
+            <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+              <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl lg:sticky lg:top-8">
+                <CourseDetailsCard
+                  course={courseDetails}
+                  setConfirmation={setConfirmationModal}
+                  handleBuyCourse={handleBuyCourse}
+                />
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="mx-auto box-content px-4 text-start text-gray-100 lg:container lg:px-6">
-          <div className="mx-auto max-w-[1200px] lg:grid lg:grid-cols-[1fr_400px] lg:gap-8">
-            <div className="lg:col-span-1">
+      {/* Main Content with improved layout */}
+      <div className="bg-gray-50 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+
+            {/* Main Content Column */}
+            <div className="lg:col-span-2 space-y-8 lg:space-y-12">
+
               {/* What will you learn section */}
-              <section className="my-6 sm:my-8 border border-gray-700 p-4 sm:p-6 rounded-lg bg-gray-900/50">
-                <h2 className="text-2xl sm:text-3xl font-semibold mb-4">What you'll learn</h2>
-                <div className="prose prose-invert max-w-none text-sm sm:text-base">
+              <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">What you'll learn</h2>
+                <div className="prose prose-gray max-w-none text-sm sm:text-base lg:text-lg">
                   <ReactMarkdown>{whatWillYouLearn}</ReactMarkdown>
                 </div>
               </section>
 
               {/* Course Content Section */}
-              <section className="max-w-[830px]">
-                <div className="flex flex-col gap-3">
-                  <h2 className="text-2xl sm:text-[28px] font-semibold">Course Content</h2>
-                  <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
-                    <div className="flex flex-wrap gap-2 sm:gap-4 text-sm sm:text-base text-gray-300">
-                      <span>{courseContent.length} section{courseContent.length !== 1 ? 's' : ''}</span>
-                      <span>{totalNoOfLectures} lecture{totalNoOfLectures !== 1 ? 's' : ''}</span>
-                      <span>{formatDuration(totalDuration)}</span>
-                      <span className="text-gray-500">total length</span>
-                    </div>
-                    <div>
-                      <button
-                        className="text-sm sm:text-base text-yellow-25 hover:text-yellow-50 transition-colors duration-200"
-                        onClick={handleCollapseAll}
-                      >
-                        Collapse all sections
-                      </button>
-                    </div>
+              <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Course Content</h2>
+                    <button
+                      className="text-blue-600 hover:text-blue-700 font-medium text-sm sm:text-base transition-colors duration-200"
+                      onClick={handleCollapseAll}
+                    >
+                      Collapse all sections
+                    </button>
                   </div>
+
+                  <div className="flex flex-wrap gap-2 sm:gap-4 text-sm sm:text-base text-gray-600">
+                    <span className="bg-gray-100 px-3 py-1 rounded-full">
+                      {courseContent.length} section{courseContent.length !== 1 ? 's' : ''}
+                    </span>
+                    <span className="bg-gray-100 px-3 py-1 rounded-full">
+                      {totalNoOfLectures} lecture{totalNoOfLectures !== 1 ? 's' : ''}
+                    </span>
+                    <span className="bg-gray-100 px-3 py-1 rounded-full">
+                      {formatDuration(totalDuration)} total
+                    </span>
+                  </div>
+                </div>
+
+                {/* Course Details Accordion */}
+                <div className="mt-6 space-y-2">
+                  {courseContent.length > 0 ? (
+                    courseContent.map((course, index) => (
+                      <CourseAccordionBar
+                        course={course}
+                        key={course._id || index}
+                        isActive={isActive}
+                        handleActive={handleActive}
+                      />
+                    ))
+                  ) : (
+                    <div className="text-center py-12 text-gray-500">
+                      <p>No course content available</p>
+                    </div>
+                  )}
                 </div>
               </section>
 
-              {/* Course Details Accordion */}
-              <div className="py-4">
-                {courseContent.length > 0 ? (
-                  courseContent.map((course, index) => (
-                    <CourseAccordionBar
-                      course={course}
-                      key={course._id || index}
-                      isActive={isActive}
-                      handleActive={handleActive}
-                    />
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    No course content available
-                  </div>
-                )}
-              </div>
-
               {/* Author Details */}
-              <section className="mb-8 sm:mb-12 py-4">
-                <h2 className="text-2xl sm:text-[28px] font-semibold mb-4">Author</h2>
-                <div className="flex items-center gap-4 py-4">
+              <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">Instructor</h2>
+                <div className="flex items-start gap-4 sm:gap-6">
                   <img
                     src={
                       instructor.image ||
                       `https://api.dicebear.com/5.x/initials/svg?seed=${instructorName}`
                     }
                     alt={`${instructorName} profile`}
-                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full object-cover border-2 border-gray-600"
+                    className="h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 rounded-full object-cover border-4 border-gray-100 flex-shrink-0"
                     loading="lazy"
                   />
-                  <p className="text-xl sm:text-2xl text-white font-semibold">{instructorName}</p>
+                  <div className="space-y-3">
+                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{instructorName}</h3>
+                    <p className="text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed">
+                      {instructor?.additionalInfo?.about || "No additional information available about the instructor."}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
-                  {instructor?.additionalInfo?.about || "No additional information available about the instructor."}
-                </p>
               </section>
             </div>
 
-            {/* Right sidebar for desktop - empty in mobile */}
-            <div className="hidden lg:block lg:col-span-1">
-              {/* This space can be used for related courses or other sidebar content */}
+            {/* Sidebar for larger screens */}
+            <div className="lg:col-span-1 hidden lg:block">
+              <div className="sticky top-8 space-y-6">
+                {/* Mobile course card shown here on larger screens as sidebar */}
+                <div className="lg:hidden">
+                  <CourseDetailsCard
+                    course={courseDetails}
+                    setConfirmation={setConfirmationModal}
+                    handleBuyCourse={handleBuyCourse}
+                  />
+                </div>
+
+                {/* Additional sidebar content can go here */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Highlights</h3>
+                  <div className="space-y-3 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span>Lifetime access</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      <span>Mobile and TV access</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                      <span>Certificate of completion</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

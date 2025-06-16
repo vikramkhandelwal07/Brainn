@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { PiShoppingCartSimpleDuotone } from "react-icons/pi";
@@ -16,6 +16,7 @@ const Navbar = () => {
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [catalogLinks, setCatalogLinks] = useState([]);
+  const catalogRef = useRef(null);
 
   const fetchCategories = async () => {
     try {
@@ -30,6 +31,23 @@ const Navbar = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Handle click outside to close catalog dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (catalogRef.current && !catalogRef.current.contains(event.target)) {
+        setIsCatalogOpen(false);
+      }
+    };
+
+    if (isCatalogOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCatalogOpen]);
 
   const isActive = (route) => {
     return matchPath({ path: route, end: true }, location.pathname);
@@ -52,6 +70,10 @@ const Navbar = () => {
     setIsCatalogOpen(false);
   };
 
+  const toggleCatalog = () => {
+    setIsCatalogOpen(!isCatalogOpen);
+  };
+
   return (
     <>
       <div className="flex h-16 items-center justify-between bg-black border-b border-gray-700 backdrop-blur-md px-4 md:px-12 z-[60] relative">
@@ -71,14 +93,15 @@ const Navbar = () => {
                 <div
                   key={link.path}
                   className="relative"
+                  ref={catalogRef}
                   onMouseEnter={() => setIsCatalogOpen(true)}
-                  onMouseLeave={() => setIsCatalogOpen(false)}
                 >
                   <span
                     className={`cursor-pointer hover:text-blue-400 transition duration-150 ${location.pathname.startsWith('/catalog')
                       ? 'text-blue-400 font-semibold'
                       : ''
                       }`}
+                    onClick={toggleCatalog}
                   >
                     Catalog ▾
                   </span>
@@ -93,6 +116,7 @@ const Navbar = () => {
                             key={category._id}
                             to={`/catalog/${category.name.toLowerCase()}`}
                             className="block px-4 py-2 hover:bg-violet-950 rounded-md hover:scale-[1.03] transition-all"
+                            onClick={() => setIsCatalogOpen(false)}
                           >
                             {category.name}
                           </Link>
@@ -189,8 +213,8 @@ const Navbar = () => {
                   <button
                     onClick={() => setIsCatalogOpen(!isCatalogOpen)}
                     className={`w-full text-left px-6 py-3 text-white hover:bg-gray-800 transition duration-150 flex justify-between items-center ${location.pathname.startsWith('/catalog')
-                        ? 'text-blue-400 font-semibold'
-                        : ''
+                      ? 'text-blue-400 font-semibold'
+                      : ''
                       }`}
                   >
                     Catalog
