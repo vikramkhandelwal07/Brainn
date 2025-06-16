@@ -318,52 +318,54 @@ function CourseDetails() {
     <>
       <div className={`relative w-full bg-gradient-to-tr from-gray-950 ${adaptiveGradientColor} to-black text-gray-100`}>
         {/* Hero Section */}
-        <div className="mx-auto box-content px-4 lg:w-[1260px] 2xl:relative">
-          <div className="mx-auto grid min-h-[450px] max-w-maxContentTab justify-items-center py-8 lg:mx-0 lg:justify-items-start lg:py-0 xl:max-w-[810px]">
+        <div className="mx-auto box-content px-4 lg:container lg:px-6 2xl:relative">
+          <div className="mx-auto grid min-h-[450px] justify-items-center py-8 lg:mx-0 lg:grid-cols-2 lg:justify-items-start lg:py-12 lg:gap-8 xl:gap-12">
 
-            {/* Mobile Thumbnail */}
-            <div className="relative block max-h-[30rem] lg:hidden ">
+            {/* Mobile Thumbnail - Hidden on desktop */}
+            {/* <div className="relative w-full lg:hidden">
               <div className="absolute bottom-0 left-0 h-full w-full shadow-[#161D29_0px_-64px_36px_-28px_inset]"></div>
               {thumbnail ? (
                 <img
                   src={thumbnail}
                   alt="course thumbnail"
-                  className="aspect-auto w-full object-cover"
+                  className="aspect-video w-full rounded-lg object-cover"
                   loading="lazy"
                 />
               ) : (
-                <div className="aspect-video w-full bg-gray-700 flex items-center justify-center">
+                <div className="aspect-video w-full rounded-lg bg-gray-700 flex items-center justify-center">
                   <span className="text-gray-400">No thumbnail available</span>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Course Info */}
-            <div className="z-30 my-5 flex flex-col justify-center gap-4 py-5 text-lg text-gray-100">
+            <div className="z-30 my-5 flex w-full flex-col justify-center gap-4 py-5 text-base sm:text-xl lg:max-w-[800px] ">
               <div>
-                <h1 className="text-6xl font-bold text-white sm:text-[42px] leading-tight">
+                <h1 className="text-3xl font-bold text-white sm:text-4xl md:text-5xl lg:text-[8xl] leading-tight lg:mt-[-30%]">
                   {courseName}
                 </h1>
               </div>
 
-              <p className="text-gray-200 leading-relaxed">{courseDescription}</p>
+              <p className="text-sm text-gray-200 leading-relaxed sm:text-base lg:mt-[-20%]">
+                {courseDescription}
+              </p>
 
-              <div className="text-md flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base ">
                 <span className="text-yellow-25 font-semibold">{avgReviewCount}</span>
-                <RatingStars Review_Count={avgReviewCount} Star_Size={24} />
+                <RatingStars Review_Count={avgReviewCount} Star_Size={20} />
                 <span className="text-gray-300">({ratingAndReviews.length} reviews)</span>
-                <span className="text-gray-300">{studentsEnrolled.length} students enrolled</span>
+                <span className="text-gray-300">{studentsEnrolled.length} students</span>
               </div>
 
-              <div className="flex flex-row gap-2 items-center">
-                <p className="text-gray-300">Created By : </p>
-                <p className="font-semibold text-white font-poppins mt-1 ">{instructorName}</p>
+              <div className="flex flex-row flex-wrap gap-2 items-center text-sm sm:text-base">
+                <p className="text-gray-300">Created By: </p>
+                <p className="font-semibold text-white">{instructorName}</p>
               </div>
 
-              <div className="flex flex-wrap gap-5 text-lg text-gray-300">
+              <div className="flex flex-wrap gap-3 text-sm sm:text-base text-gray-300">
                 <p className="flex items-center gap-2">
                   <BiInfoCircle className="text-blue-400" />
-                  Created at {createdAt ? formatDate(createdAt) : "Date not available"}
+                  {createdAt ? formatDate(createdAt) : "Date not available"}
                 </p>
                 <p className="flex items-center gap-2">
                   <HiOutlineGlobeAlt className="text-green-400" />
@@ -372,107 +374,96 @@ function CourseDetails() {
               </div>
             </div>
 
-            {/* Mobile Buy Section */}
-            <div className="flex w-full flex-col gap-4 border-y border-y-gray-700 py-4 lg:hidden">
-              <p className="space-x-3 pb-4 text-3xl font-semibold text-gray-100">
-                Rs. {price.toLocaleString()}
-              </p>
-              <button
-                className="yellowButton transition-all duration-200 hover:scale-105"
-                onClick={handleBuyCourse}
-                disabled={paymentLoading}
-              >
-                {paymentLoading ? "Processing..." : "Buy Now"}
-              </button>
-              <button className="blackButton transition-all duration-200 hover:scale-105">
-                Add to Cart
-              </button>
+            {/* Desktop Course Card - Positioned differently on mobile */}
+            <div className="w-full lg:sticky lg:top-24 lg:self-start lg:translate-y-12 ">
+              <CourseDetailsCard
+                course={courseDetails}
+                setConfirmation={setConfirmationModal}
+                handleBuyCourse={handleBuyCourse}
+              />
             </div>
-          </div>
-
-          {/* Desktop Course Card */}
-          <div className="right-[1rem] top-[60px] mx-auto hidden min-h-[600px] w-1/3 max-w-[410px] translate-y-24 md:translate-y-0 lg:absolute lg:block">
-            <CourseDetailsCard
-              course={courseDetails}
-              setConfirmation={setConfirmationModal}
-              handleBuyCourse={handleBuyCourse}
-            />
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="mx-auto box-content px-4 text-start text-gray-100 lg:w-[1260px]">
-        <div className="mx-auto max-w-maxContentTab lg:mx-0 xl:max-w-[810px]">
-
-          {/* What will you learn section */}
-          <section className="my-8 border border-gray-700 p-8 rounded-lg bg-gray-900/50">
-            <h2 className="text-3xl font-semibold mb-5">What you'll learn</h2>
-            <div className="prose prose-invert max-w-none">
-              <ReactMarkdown>{whatWillYouLearn}</ReactMarkdown>
-            </div>
-          </section>
-
-          {/* Course Content Section */}
-          <section className="max-w-[830px]">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-[28px] font-semibold">Course Content</h2>
-              <div className="flex flex-wrap justify-between gap-2">
-                <div className="flex gap-4 text-gray-300">
-                  <span>{courseContent.length} section{courseContent.length !== 1 ? 's' : ''}</span>
-                  <span>{totalNoOfLectures} lecture{totalNoOfLectures !== 1 ? 's' : ''}</span>
-                  <span className="">{formatDuration(totalDuration)}</span>
-                  <span className="text-sm mt-1 text-gray-500 ml-[-4%]">total length</span>
+        {/* Main Content */}
+        <div className="mx-auto box-content px-4 text-start text-gray-100 lg:container lg:px-6">
+          <div className="mx-auto max-w-[1200px] lg:grid lg:grid-cols-[1fr_400px] lg:gap-8">
+            <div className="lg:col-span-1">
+              {/* What will you learn section */}
+              <section className="my-6 sm:my-8 border border-gray-700 p-4 sm:p-6 rounded-lg bg-gray-900/50">
+                <h2 className="text-2xl sm:text-3xl font-semibold mb-4">What you'll learn</h2>
+                <div className="prose prose-invert max-w-none text-sm sm:text-base">
+                  <ReactMarkdown>{whatWillYouLearn}</ReactMarkdown>
                 </div>
-                <div>
-                  <button
-                    className="text-yellow-25 hover:text-yellow-50 transition-colors duration-200"
-                    onClick={handleCollapseAll}
-                  >
-                    Collapse all sections
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
+              </section>
 
-          {/* Course Details Accordion */}
-          <div className="py-4">
-            {courseContent.length > 0 ? (
-              courseContent.map((course, index) => (
-                <CourseAccordionBar
-                  course={course}
-                  key={course._id || index}
-                  isActive={isActive}
-                  handleActive={handleActive}
-                />
-              ))
-            ) : (
-              <div className="text-center py-8 text-gray-400">
-                No course content available
+              {/* Course Content Section */}
+              <section className="max-w-[830px]">
+                <div className="flex flex-col gap-3">
+                  <h2 className="text-2xl sm:text-[28px] font-semibold">Course Content</h2>
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
+                    <div className="flex flex-wrap gap-2 sm:gap-4 text-sm sm:text-base text-gray-300">
+                      <span>{courseContent.length} section{courseContent.length !== 1 ? 's' : ''}</span>
+                      <span>{totalNoOfLectures} lecture{totalNoOfLectures !== 1 ? 's' : ''}</span>
+                      <span>{formatDuration(totalDuration)}</span>
+                      <span className="text-gray-500">total length</span>
+                    </div>
+                    <div>
+                      <button
+                        className="text-sm sm:text-base text-yellow-25 hover:text-yellow-50 transition-colors duration-200"
+                        onClick={handleCollapseAll}
+                      >
+                        Collapse all sections
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Course Details Accordion */}
+              <div className="py-4">
+                {courseContent.length > 0 ? (
+                  courseContent.map((course, index) => (
+                    <CourseAccordionBar
+                      course={course}
+                      key={course._id || index}
+                      isActive={isActive}
+                      handleActive={handleActive}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-400">
+                    No course content available
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Author Details */}
+              <section className="mb-8 sm:mb-12 py-4">
+                <h2 className="text-2xl sm:text-[28px] font-semibold mb-4">Author</h2>
+                <div className="flex items-center gap-4 py-4">
+                  <img
+                    src={
+                      instructor.image ||
+                      `https://api.dicebear.com/5.x/initials/svg?seed=${instructorName}`
+                    }
+                    alt={`${instructorName} profile`}
+                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full object-cover border-2 border-gray-600"
+                    loading="lazy"
+                  />
+                  <p className="text-xl sm:text-2xl text-white font-semibold">{instructorName}</p>
+                </div>
+                <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
+                  {instructor?.additionalInfo?.about || "No additional information available about the instructor."}
+                </p>
+              </section>
+            </div>
+
+            {/* Right sidebar for desktop - empty in mobile */}
+            <div className="hidden lg:block lg:col-span-1">
+              {/* This space can be used for related courses or other sidebar content */}
+            </div>
           </div>
-
-          {/* Author Details */}
-          <section className="mb-12 py-4">
-            <h2 className="text-[28px] font-semibold mb-4">Author</h2>
-            <div className="flex items-center gap-4 py-4">
-              <img
-                src={
-                  instructor.image ||
-                  `https://api.dicebear.com/5.x/initials/svg?seed=${instructorName}`
-                }
-                alt={`${instructorName} profile`}
-                className="h-14 w-14 rounded-full object-cover border-2 border-gray-600"
-                loading="lazy"
-              />
-              <p className="text-2xl text-white font-semibold font-poppins mt-1">{instructorName}</p>
-            </div>
-            <p className="text-gray-300 leading-relaxed">
-              {instructor?.additionalInfo?.about || "No additional information available about the instructor."}
-            </p>
-          </section>
         </div>
       </div>
 
