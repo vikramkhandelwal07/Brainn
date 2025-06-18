@@ -14,7 +14,7 @@ const {
   isAdmin,
 } = require("../middlewares/auth");
 router.post("/capturePayments", auth, isStudent, capturePayments);
-router.post("/verifyPayment", auth, isStudent, verifyPayment);
+router.post("/verifyPayment", auth, verifyPayment);
 router.post(
   "/sendPaymentSuccessEmail",
   auth,

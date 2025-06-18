@@ -2,9 +2,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-
-// <======= Middleware: isAuthenticated  =======> 
-
+// <======= Middleware: isAuthenticated  =======>
 
 exports.auth = async (req, res, next) => {
   try {
@@ -21,8 +19,20 @@ exports.auth = async (req, res, next) => {
     // Verify token
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;
+
+      // Debug: Log the decoded token structure
+      console.log("DEBUG - Decoded token:", decoded);
+
+      // Ensure consistent user ID access
+      req.user = {
+        ...decoded,
+        id: decoded.id || decoded._id || decoded.userId, // Handle multiple possible ID fields
+      };
+
+      // Additional debug
+      console.log("DEBUG - req.user after setting:", req.user);
     } catch (err) {
+      console.error("Token verification error:", err);
       return res
         .status(401)
         .json({ success: false, message: "Invalid or expired token" });
@@ -31,17 +41,14 @@ exports.auth = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Something went wrong during authentication",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong during authentication",
+    });
   }
 };
 
-// <======= Middleware: isStudent  =======> 
-
+// <======= Middleware: isStudent  =======>
 
 exports.isStudent = async (req, res, next) => {
   try {
@@ -58,7 +65,7 @@ exports.isStudent = async (req, res, next) => {
   }
 };
 
-// <======= Middleware: isInstructor  =======> 
+// <======= Middleware: isInstructor  =======>
 
 exports.isInstructor = async (req, res, next) => {
   try {
@@ -75,8 +82,7 @@ exports.isInstructor = async (req, res, next) => {
   }
 };
 
-
-// <======= Middleware: isAdmin  =======> 
+// <======= Middleware: isAdmin  =======>
 
 exports.isAdmin = async (req, res, next) => {
   try {

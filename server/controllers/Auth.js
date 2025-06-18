@@ -176,19 +176,21 @@ exports.login = async (req, res) => {
       });
     }
 
-    // 4. Generate JWT token
+    // 4. Generate JWT token - FIXED: Use consistent field names
     const payload = {
-      id: user._id,
+      id: user._id, // Use 'id' for consistency
+      _id: user._id, // Keep _id as backup
       email: user.email,
       accountType: user.accountType,
     };
 
-    const token = jwt.sign(
-      { _id: user._id, email: user.email, accountType: user.accountType },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-    console.log("Decoded JWT:", req.user);
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    // Debug log to verify token structure
+    console.log("JWT Payload:", payload);
+    console.log("Token created successfully");
 
     user.token = token;
     user.password = undefined;
@@ -214,7 +216,6 @@ exports.login = async (req, res) => {
     });
   }
 };
-
 // controller for changing password
 
 exports.changePassword = async (req, res) => {
