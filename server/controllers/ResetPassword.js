@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const User = require("../models/User");
 const mailSender = require("../utils/sendMail");
 const bcrypt = require("bcrypt");
+require("dotenv").config();
 
 exports.resetPasswordToken = async (req, res) => {
   try {
