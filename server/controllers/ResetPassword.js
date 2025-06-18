@@ -30,7 +30,8 @@ exports.resetPasswordToken = async (req, res) => {
 
     await user.save();
 
-    const url = `http://localhost:3000/update-password/${token}`;
+    const url = `${process.env.FRONTEND_URL}/update-password/${token}`;
+
 
     const subject = "Brainn | Password Reset Link";
     const body = `
